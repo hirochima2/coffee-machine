@@ -1,0 +1,15 @@
+treba prvo struct tip kafe
+dvije funkcije jedna setting jedna operation mode
+trebaju datoteke da se može čuvati koliko ima čega
+klase u kojima su funkcije koje mijenjaju osobine kafe
+funkcije za kontrolu unosa para, cijene kafe, i koji tip para se prima
+funkcije za kontrolu kusura i pregled da li je dovoljno unešeno para
+funkcije koje kontrolišu koliko para ima
+ograničen je broj kafa u programu tako da kad nestane treba biti ispisano prikladno
+Na kraju treba biti ispisano u dokumentu koliko je kafa prodano, koliko je ostalo, koji je profit i u kakvom je stanju mašina.
+Trebaju biti funkcije koje izbacuju greške!
+-Imran- Predlazem funkciju za pravljenje profila koji pamte koju kafu taj profil hoce.
+-Imran- Funkcija dopunjavanja kafe / mlijeka / secera.
+-Imran- Kada nema para za kusur u aparatu aparat ne vraca kusur i upozorava korisnika na to
+
+

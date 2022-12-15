@@ -1,0 +1,25 @@
+Ovako će nam odprilike izgledati struktura programa
+Sve klase i sve funkcije koje budemo imali bit će u header folderu
+header folder sadrži minimalno dva fajla koja moramo editovati (u ovom primjeru imamo biblioteka.h i biblioteka.cpp)
+primjetit ćete da sam prije pravljenja klase ubacio par funkcija što znači da u .h fileu mogu i funkcije stajati izvan klase mada sumnjam da će nam to trebati
+sve biblioteke koje ubacite u .h fileu prenose se u .cpp file, a sve biblioteke koje stavite u .cpp file prenose se u main.cpp
+u .cpp fileu je sva implementacija funkcija kako one rade i sl i obavezno je gore staviti <u ovom slucaju> #include "biblioteka.h".
+U main fileu moramo samo .h file includeat ne moramo .cpp
+u main.cppu includeamo ovako:
+#include "header/biblioteka.h" - ime foldera gdje se nalazi i onda ime biblioteke što je u ovom slučaju biblioteka.h
+
+jedino što je zajebano malo je kompajlanje
+
+morate skinuti g++ kako znate i umijete i onda otvorite cmd ili powershell
+provjerite jel radi g++ tako sto ukucate samo g++, ako izbaci gresku u fazonu da nema sta da kompajla to je to
+
+navedite cmd ili powershell do mjesta gdje je program
+kad ste u Test folderu 
+pokrenite sljedeće komande:
+g++ -c header/biblioteka.h
+g++ -c header/biblioteka.cpp
+g++ -c main.cpp
+g++ biblioteka.o main.o -o main - ako ovo ne bude radilo probajte onda ovo
+g++ header/biblioteka.o main.o -o main
+ovo kad uradite exe file će biti tu kojeg samo pokrenete
+
