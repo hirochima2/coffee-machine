@@ -10,6 +10,12 @@
 // Path: header\library.h
 // Compare this snippet from main.cpp:
 // #include "header/library.h"
+struct TypesOfCoffee{
+    std::string name;
+    double price;
+    int quantity;
+    int id;
+};
 
 class PasswordFunctions{
     private:
@@ -26,4 +32,9 @@ class PasswordFunctions{
         void setPassword(std::string); // ovo smo radili na faksu
 
 
+};
+class CoffeeFunctions{
+    public:
+    void AddCoffeeName(std::string); // Dodaje ime kafe u fajl
+    void CoffeeUI();
 };

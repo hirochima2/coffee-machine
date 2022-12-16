@@ -163,3 +163,13 @@ bool PasswordFunctions::CheckForgottenPassword(string password){ // Ova funkcija
     inFile.close();
     return returner;
 }
+void CoffeeFunctions::AddCoffeeName(string name){ // Ova funkcija dodaje ime kafe u fajl
+    fstream outFile;
+    outFile.open("header/coffeeNames.txt", ios::out | ios::app);
+    if(!outFile){
+        cout << "Error opening file";
+        exit(1);
+    }
+    outFile << name << endl;
+    outFile.close();
+}

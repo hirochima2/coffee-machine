@@ -5,7 +5,8 @@ using namespace std;
 
 int main(){
     PasswordFunctions pass;
-    string password;
+    CoffeeFunctions coffee;
+    string password, coffeeName;
     bool wrongPass = false;
    
     if(pass.CheckIfFirstPassword()) cout << "First time running program." << endl;
@@ -25,7 +26,10 @@ int main(){
     bool check = pass.CheckPassword(password);
     if(check == true){
          cout << "Password is correct" << endl;
-        }   
+         cout << "Enter coffee name: ";
+         cin >> coffeeName;
+         coffee.AddCoffeeName(coffeeName);
+    }
          else{
             for(int i =0; i < 3; i++){
                 if(i == 2){
@@ -45,6 +49,7 @@ int main(){
     if(wrongPass == true){	
         if(!pass.CheckBackupPassIsEmpty()){
             string answer;
+            bool repeat = false;
             cout << "Answer this question: Describe Aldin in one word: ";
             cin >> answer;
             bool check = pass.CheckForgottenPassword(answer);
@@ -57,6 +62,7 @@ int main(){
                 if(answer == password){
                     pass.setFirstPassword(password);
                     cout << "Password has been changed" << endl;
+                    repeat=true;
                 }
                 else{
                     //enter password until they match
@@ -67,9 +73,11 @@ int main(){
                         cin >> password;
                     }
                 }
+                if(!repeat){
                 if(answer == password){
                     pass.setFirstPassword(password);
                     cout << "Password has been changed" << endl;
+                }
                 }
 
             }
