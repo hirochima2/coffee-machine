@@ -170,6 +170,48 @@ void CoffeeFunctions::AddCoffeeName(string name){ // Ova funkcija dodaje ime kaf
         cout << "Error opening file";
         exit(1);
     }
+    cin.ignore(100, '\n'); 
     outFile << name << endl;
     outFile.close();
+}
+void CoffeeFunctions::CoffeeUI(){
+    // coffee names from file and in an ordered list
+    fstream infile;
+    string name;
+    infile.open("header/coffeeNames.txt", ios::in);
+    if(!infile){
+        cout << "Error opening file";
+        exit(1);
+    }
+    int i = 1;
+    while(infile >> name){
+    
+        // infile << name << endl;
+        cout << i << ". " << name << endl;
+        i++;
+    }
+    cout << " -------------------------------" << endl;
+    infile.close();
+
+}
+void CoffeeFunctions::SetTypesOfCoffee(TypesOfCoffee coffee[]){
+    string name;
+    int i = 0;
+    char ans;
+    do{
+        
+        cout << "Enter the name of the coffee: ";
+        cin >> name;
+        AddCoffeeName(name);
+        coffee[i].name = name; // napravi neku mandzu da se napravi niz od elemenata koliko ima kafa i da se moze vremenom povecavati
+        CoffeeUI();
+        cout << "Do you want to add another coffee? (y/n): ";
+        cin >> ans;
+        if(ans == 'y'){
+            i++;
+        }
+    }while(ans == 'y');
+
+    
+
 }

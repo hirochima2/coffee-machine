@@ -1,11 +1,14 @@
 #include "header/library.h"
-#include <conio.h>
+// include library that is needed for system pause
+#include <iostream>
+//include <conio.h>
 
 using namespace std;
 
 int main(){
     PasswordFunctions pass;
     CoffeeFunctions coffee;
+    TypesOfCoffee coffe[3];
     string password, coffeeName;
     bool wrongPass = false;
    
@@ -26,9 +29,7 @@ int main(){
     bool check = pass.CheckPassword(password);
     if(check == true){
          cout << "Password is correct" << endl;
-         cout << "Enter coffee name: ";
-         cin >> coffeeName;
-         coffee.AddCoffeeName(coffeeName);
+         coffee.SetTypesOfCoffee(coffe);
     }
          else{
             for(int i =0; i < 3; i++){
@@ -84,7 +85,8 @@ int main(){
             
         }
     }
-    // system("pause");
-    getch();
+     cin.get();
+     cout << "Press any key to continue...";
+    //getch();
     return 0;
 }
