@@ -5,7 +5,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <cmath>
-//#include <conio.h>
+#include <conio.h>
 
 // Path: header\library.h
 // Compare this snippet from main.cpp:
@@ -38,4 +38,6 @@ class CoffeeFunctions{
     void AddCoffeeName(std::string); // Dodaje ime kafe u fajl
     void CoffeeUI();
     void SetTypesOfCoffee(TypesOfCoffee[]); // Postavlja podatke o kafama
+    void RemoveTypesOfCoffee(TypesOfCoffee[]); // Brise podatke o kafama
+    int SizeOfTypesOfCoffee(); // Vraca broj vrsta kafe
 };

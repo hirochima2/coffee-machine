@@ -214,4 +214,48 @@ void CoffeeFunctions::SetTypesOfCoffee(TypesOfCoffee coffee[]){
 
     
 
+
+}
+int CoffeeFunctions::SizeOfTypesOfCoffee(){
+    fstream infile;
+    string name;
+    infile.open("header/coffeeNames.txt", ios::in);
+    if(!infile){
+        cout << "Error opening file";
+        exit(1);
+    }
+    int i = 0;
+    while(infile >> name){
+        i++;
+    }
+    infile.close();
+    return i;
+}
+void CoffeeFunctions::RemoveTypesOfCoffee(TypesOfCoffee coffee[]){
+    fstream file;
+    string choice;
+    cout << "Enter the coffee you want to remove: ";
+    cin >> choice;
+    // remove all and only ordinal numbers from file
+    file.open("header/coffeeNames.txt", ios::out | ios::trunc);
+    if(!file){
+        cout << "Error opening file";
+        exit(1);
+    }
+
+    file.close();
+    // write all the names except the one that is chosen
+    file.open("header/coffeeNames.txt", ios::out | ios::app);
+    if(!file){
+        cout << "Error opening file";
+        exit(1);
+    }
+    int size = sizeof(coffee)/sizeof(coffee[0]);
+    for(int i = 0; i < size; i++){
+        if(coffee[i].name != choice){
+            file << coffee[i].name << endl;
+        }
+    }
+
+
 }
