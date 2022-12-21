@@ -256,6 +256,6 @@ void CoffeeFunctions::RemoveTypesOfCoffee(TypesOfCoffee coffee[]){
             file << coffee[i].name << endl;
         }
     }
-
+    // ovo je komentar
 
 }
