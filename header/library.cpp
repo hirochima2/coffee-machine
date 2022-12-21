@@ -163,6 +163,24 @@ bool PasswordFunctions::CheckForgottenPassword(string password){ // Ova funkcija
     inFile.close();
     return returner;
 }
+bool CoffeeFunctions::CheckIfCoffeeNameExists(string name){
+    fstream inFile;
+    string nameChecker;
+    bool returner;
+    inFile.open("header/coffeeNames.txt", ios::in);
+    if(!inFile){
+        cout << "Error opening file";
+        exit(1);
+    }
+    while(inFile >> nameChecker){
+        if(nameChecker == name){
+            returner = true;
+        }
+        else returner = false;
+    }
+    inFile.close();
+    return returner;
+}
 void CoffeeFunctions::AddCoffeeName(string name){ // Ova funkcija dodaje ime kafe u fajl
     fstream outFile;
     outFile.open("header/coffeeNames.txt", ios::out | ios::app);
@@ -170,7 +188,13 @@ void CoffeeFunctions::AddCoffeeName(string name){ // Ova funkcija dodaje ime kaf
         cout << "Error opening file";
         exit(1);
     }
-    cin.ignore(100, '\n'); 
+    cin.ignore(100, '\n'); // da bi se izbjeglo da se ime kafe ucita u isti red kao i prethodno ime kafe
+    // check if type of coffee already exists
+    if(CheckIfCoffeeNameExists(name)){
+        cout << "This coffee name already exists!" << endl;
+        cout << "Please enter a different name!" << endl;
+        return;
+    }
     outFile << name << endl;
     outFile.close();
 }
@@ -202,6 +226,7 @@ void CoffeeFunctions::SetTypesOfCoffee(TypesOfCoffee coffee[]){
         
         cout << "Enter the name of the coffee: ";
         cin >> name;
+    
         AddCoffeeName(name);
         coffee[i].name = name; // napravi neku mandzu da se napravi niz od elemenata koliko ima kafa i da se moze vremenom povecavati
         CoffeeUI();
@@ -233,29 +258,63 @@ int CoffeeFunctions::SizeOfTypesOfCoffee(){
 }
 void CoffeeFunctions::RemoveTypesOfCoffee(TypesOfCoffee coffee[]){
     fstream file;
+    fstream temp_file;
     string choice;
-    cout << "Enter the coffee you want to remove: ";
-    cin >> choice;
-    // remove all and only ordinal numbers from file
-    file.open("header/coffeeNames.txt", ios::out | ios::trunc);
-    if(!file){
-        cout << "Error opening file";
-        exit(1);
-    }
+    char ans;
+    int g = 0;
+    do{
+        cout << "Enter the coffee you want to remove: ";
+        cin >> choice;
+    // copy the file to another file without copying number
+        file.open("header/coffeeNames.txt", ios::in);
+        temp_file.open("header/temp.txt", ios::out);
+        if(!file){
+            cout << "Error opening file";
+            exit(1);
 
-    file.close();
-    // write all the names except the one that is chosen
-    file.open("header/coffeeNames.txt", ios::out | ios::app);
-    if(!file){
-        cout << "Error opening file";
-        exit(1);
-    }
-    int size = sizeof(coffee)/sizeof(coffee[0]);
-    for(int i = 0; i < size; i++){
-        if(coffee[i].name != choice){
-            file << coffee[i].name << endl;
         }
-    }
-    // ovo je komentar
+        if(!temp_file){
+            cout << "Error opening file";
+            exit(1);
+        }
+        string name;
+        while(file >> name){
+            if(name == choice) g++;
+
+            if(name != choice){
+                temp_file << name << endl;
+            }
+
+        }
+        if(g == 0){
+            cout << "There is no coffee with that name!" << endl;
+        }
+        
+        //clear coffeeNames.txt
+        file.close();
+        temp_file.close();
+        file.open("header/coffeeNames.txt", ios::out);
+        temp_file.open("header/temp.txt", ios::in);
+        if(!file){
+            cout << "Error opening file";
+            exit(1);
+        }
+        if(!temp_file){
+            cout << "Error opening file";
+            exit(1);
+        }
+        while(temp_file >> name){
+            file << name << endl;
+        }
+        file.close();
+    // clear temp.txt
+        temp_file.close();
+        temp_file.open("header/temp.txt", ios::out);
+        temp_file.close();
+        CoffeeUI();
+        cout << "Do you want to remove another coffee (y/n): ";
+        cin >> ans;
+        g = 0;
+    }while(ans == 'y');
 
 }

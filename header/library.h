@@ -40,4 +40,5 @@ class CoffeeFunctions{
     void SetTypesOfCoffee(TypesOfCoffee[]); // Postavlja podatke o kafama
     void RemoveTypesOfCoffee(TypesOfCoffee[]); // Brise podatke o kafama
     int SizeOfTypesOfCoffee(); // Vraca broj vrsta kafe
+    bool CheckIfCoffeeNameExists(std::string); // Provjerava da li kafa postoji
 };
