@@ -42,3 +42,7 @@ class CoffeeFunctions{
     int SizeOfTypesOfCoffee(); // Vraca broj vrsta kafe
     bool CheckIfCoffeeNameExists(std::string); // Provjerava da li kafa postoji
 };
+class ProgramFuncs{
+    public:
+    void BeginProgram(); // Ova funkcija se poziva na pocetku programa i ona provjerava da li je prvi put da se ulazi u program
+};
