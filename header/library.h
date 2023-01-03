@@ -45,4 +45,13 @@ class CoffeeFunctions{
 class ProgramFuncs{
     public:
     void BeginProgram(); // Ova funkcija se poziva na pocetku programa i ona provjerava da li je prvi put da se ulazi u program
+    void AdminMode();
+    
+};
+class AdminFuncs{
+    public: 
+    void ChangePass(std::string, PasswordFunctions);
+    void NoBackupPass();
+    void FirstPassword(std::string);
+    void Operations(TypesOfCoffee[]);
 };

@@ -318,50 +318,89 @@ void CoffeeFunctions::RemoveTypesOfCoffee(TypesOfCoffee coffee[]){
     }while(ans == 'y');
 
 }
-void ProgramFuncs::BeginProgram(){
+void ProgramFuncs::AdminMode(){
     PasswordFunctions pass;
     CoffeeFunctions coffee;
     TypesOfCoffee coffeeTypes[100];
     string password, coffeName;
+    AdminFuncs admin;
     bool wrongPass = false;
-    if(pass.CheckIfFirstPassword()) cout << "First time running program!" << endl;
-    else cout << "Welcome back!" << endl;
+    if(pass.CheckIfFirstPassword()){ cout << "First time running program!" << endl;
+   // else cout << "Welcome back!" << endl;
     if(pass.CheckBackupPassIsEmpty()){
-        string answer;
-        cout << "You have not set a backup password! Do so now." << endl;
-        cout << "Answer this question: Describe Aldin in one word: ";
-        cin >> answer;
-        pass.setBackupPassword(answer);
+        admin.NoBackupPass();
     }
-    cout << "Enter password: ";
-    cin >> password;
-    pass.setFirstPassword(password);
+    admin.FirstPassword(password);
+    }
+    else{
+        cout << "Welcome back!" << endl;
+        cout << "Enter password: ";
+        cin >> password;
+    }
     bool check = pass.CheckPassword(password);
     if(check == true){
         cout << "Password is correct!" << endl;
-        coffee.SetTypesOfCoffee( coffeeTypes);
-        coffee.RemoveTypesOfCoffee(coffeeTypes);
+        admin.Operations(coffeeTypes);
     }
     else{
         for(int i = 0; i < 3; i++){
             if(i==2){
                 cout << "ERROR: You have entered wrong password 3 times! Please contact system administrator(105)" << endl;
                 wrongPass = true;
+                system("PAUSE");
                 exit(1);
             }
             else if (check == true){
                 cout << "Password is correct!" << endl;
+                admin.Operations(coffeeTypes);
                 i = 4;
                 break;
             }
             else cout << "Password is incorrect!" << endl;
             cout << "Enter password: ";
             cin >> password;
+            check = pass.CheckPassword(password);
         }
     }
     if(wrongPass == true){	
         if(!pass.CheckBackupPassIsEmpty()){
-            string answer;
+                admin.ChangePass(password,pass);
+                }
+
+            }
+            
+        }
+    //}
+    // cin.get();
+    // cout << "Press any key to continue...";
+//}
+void ProgramFuncs::BeginProgram(){
+    int choice;
+    cout << "Welcome to the coffee machine!" << endl;
+    cout << "Choose between the following options: " << endl;
+    cout << "1. User mode " << endl;
+    cout << "2. Admin mode " << endl;
+    cin >> choice;
+    switch(choice){
+        case 1:
+            //UserMode();
+            cout << "Coming soon...";
+            break;
+        case 2:
+            AdminMode();
+            break;
+        default:
+            cout << "Invalid choice!" << endl;
+            do{
+                cout << "Choose between the following options: " << endl;
+                cout << "1. User mode " << endl;
+                cout << "2. Admin mode " << endl;
+                cin >> choice;}while(choice != 1 || choice != 2);
+            break;
+    }
+}
+void AdminFuncs::ChangePass(string password, PasswordFunctions pass){
+    string answer;
             bool repeat = false;
             cout << "Answer this question: Describe Aldin in one word: ";
             cin >> answer;
@@ -391,12 +430,32 @@ void ProgramFuncs::BeginProgram(){
                     pass.setFirstPassword(password);
                     cout << "Password has been changed" << endl;
                 }
-                }
-
-            }
-            
         }
-    }
-    // cin.get();
-    // cout << "Press any key to continue...";
+   }
+}
+void AdminFuncs::NoBackupPass(){
+    string answer;
+    PasswordFunctions pass;
+        cout << "You have not set a backup password! Do so now." << endl;
+        cout << "Answer this question: Describe Aldin in one word: ";
+        cin >> answer;
+        pass.setBackupPassword(answer);
+}
+void AdminFuncs::FirstPassword(string password){
+    string answer;
+    PasswordFunctions pass;
+    cout << "You have not set a password! Do so now." << endl;
+    cout << "Enter password: ";
+    cin >> answer;
+    pass.setFirstPassword(answer);
+    system("PAUSE");
+    system("CLS");
+    cout << "Welcome back!" << endl;
+    cout << "Enter password: ";
+    cin >> password;
+}
+void AdminFuncs::Operations(TypesOfCoffee coffeeTypes[]){
+        CoffeeFunctions coffee;
+        coffee.SetTypesOfCoffee(coffeeTypes);
+        coffee.RemoveTypesOfCoffee(coffeeTypes); 
 }
