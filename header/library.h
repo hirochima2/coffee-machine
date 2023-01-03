@@ -54,4 +54,6 @@ class AdminFuncs{
     void NoBackupPass();
     void FirstPassword(std::string);
     void Operations(TypesOfCoffee[]);
+    // create a function that uses int as parameter and returns int
+    void AdminUI();
 };

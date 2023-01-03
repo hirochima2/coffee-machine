@@ -208,6 +208,7 @@ void CoffeeFunctions::CoffeeUI(){
         exit(1);
     }
     int i = 1;
+    cout << " -------------------------------" << endl;
     while(infile >> name){
     
         // infile << name << endl;
@@ -222,16 +223,18 @@ void CoffeeFunctions::SetTypesOfCoffee(TypesOfCoffee coffee[]){
     string name;
     int i = 0;
     char ans;
+    
     do{
-        
+        CoffeeUI();
         cout << "Enter the name of the coffee: ";
         cin >> name;
-    
+        system("CLS");
         AddCoffeeName(name);
         coffee[i].name = name; // napravi neku mandzu da se napravi niz od elemenata koliko ima kafa i da se moze vremenom povecavati
         CoffeeUI();
         cout << "Do you want to add another coffee? (y/n): ";
         cin >> ans;
+        system("CLS");
         if(ans == 'y'){
             i++;
         }
@@ -262,9 +265,12 @@ void CoffeeFunctions::RemoveTypesOfCoffee(TypesOfCoffee coffee[]){
     string choice;
     char ans;
     int g = 0;
+
     do{
+        CoffeeUI();
         cout << "Enter the coffee you want to remove: ";
         cin >> choice;
+        system("CLS");
     // copy the file to another file without copying number
         file.open("header/coffeeNames.txt", ios::in);
         temp_file.open("header/temp.txt", ios::out);
@@ -314,6 +320,7 @@ void CoffeeFunctions::RemoveTypesOfCoffee(TypesOfCoffee coffee[]){
         CoffeeUI();
         cout << "Do you want to remove another coffee (y/n): ";
         cin >> ans;
+        system("CLS");
         g = 0;
     }while(ans == 'y');
 
@@ -454,8 +461,75 @@ void AdminFuncs::FirstPassword(string password){
     cout << "Enter password: ";
     cin >> password;
 }
+void AdminFuncs::AdminUI(){
+            cout << "----------------------------------------" << endl;
+            cout << "Welcome to admin mode!" << endl;
+            cout << "Choose between the following options: " << endl;
+            cout << "1. Add coffee " << endl;
+            cout << "2. Remove coffee " << endl;
+            cout << "3. Change price of coffee" << endl;
+            cout << "4. Change how many cups are left" << endl;
+            cout << "5. Change coffee name" << endl;
+            cout << "6. Weekly report " << endl;
+            cout << "7. Exit " << endl;
+            cout << "----------------------------------------" << endl;
+            cout << "Choose option: ";
+            
+}
 void AdminFuncs::Operations(TypesOfCoffee coffeeTypes[]){
         CoffeeFunctions coffee;
-        coffee.SetTypesOfCoffee(coffeeTypes);
-        coffee.RemoveTypesOfCoffee(coffeeTypes); 
+        int choice;
+        system("PAUSE");
+        system("CLS");
+        do{
+           AdminUI();
+           cin >> choice;
+           system("CLS");
+           switch(choice){
+            case 1:
+                coffee.SetTypesOfCoffee(coffeeTypes);
+                break;
+            case 2:
+                coffee.RemoveTypesOfCoffee(coffeeTypes);
+                break;
+            case 3:
+                cout << "Coming soon!" << endl;
+               
+                break;
+            case 4:
+                cout << "Coming soon!" << endl;
+                
+                break;
+            case 5:
+                cout << "Coming soon!" << endl;
+                
+                break;
+            case 6:
+                cout << "Coming soon!" << endl;
+               // system("PAUSE");
+               // system("CLS");
+                break;
+            case 7:
+                cout << "Exiting program..." << endl;
+                break;
+            default:
+                int choi;
+               // while(choi > 7 || choi < 1){
+                    cout << "Invalid choice!" << endl;
+                    cout << "You will be redirected to the main menu!" << endl;
+                  //  system("PAUSE");
+                   // system("CLS");
+                 //   AdminUI();
+                  //  cin >> choi;
+               // }
+                break;
+           }
+        if(choice != 7){
+            system("PAUSE");
+            system("CLS");
+        }
+        }while(choice != 7);
+
+        //coffee.SetTypesOfCoffee(coffeeTypes);
+        //coffee.RemoveTypesOfCoffee(coffeeTypes); 
 }
