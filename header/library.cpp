@@ -198,22 +198,66 @@ void CoffeeFunctions::AddCoffeeName(string name){ // Ova funkcija dodaje ime kaf
     outFile << name << endl;
     outFile.close();
 }
+void CoffeeFunctions::AddCoffeePrice(double price){
+    fstream outFile;
+    outFile.open("header/coffeePrices.txt", ios::out | ios::app);
+    if(!outFile){
+        cout << "Error opening file";
+        exit(1);
+    }
+    outFile << price << endl;
+    outFile.close();
+}
+void CoffeeFunctions::AddCoffeeQuantity(int quantity){
+    fstream outFile;
+    outFile.open("header/coffeeQuantities.txt", ios::out | ios::app);
+    if(!outFile){
+        cout << "Error opening file";
+        exit(1);
+    }
+    outFile << quantity << endl;
+    outFile.close();
+}
 void CoffeeFunctions::CoffeeUI(){
     // coffee names from file and in an ordered list
-    fstream infile;
+    fstream infile, price, quantity;
     string name;
+    double priceOfCoffee;
+    int quantityOfCoffee;
     infile.open("header/coffeeNames.txt", ios::in);
+    price.open("header/coffeePrices.txt", ios::in);
+    quantity.open("header/coffeeQuantities.txt", ios::in);
+
+    if(!price){
+        cout << "Error opening file where coffee prices are stored!";
+        exit(1);
+    }
+    if(!quantity){
+        cout << "Error opening file where coffee quantities are stored!";
+        exit(1);
+    }
     if(!infile){
         cout << "Error opening file";
         exit(1);
     }
     int i = 1;
+    cout << "Type of coffee - Price - Quantity" << endl;
+    cout << "Type exit to go back to main menu" << endl;
     cout << " -------------------------------" << endl;
+    string temp;
+   // int w = 5;
     while(infile >> name){
-    
+        price >> priceOfCoffee;
+        quantity >> quantityOfCoffee;
         // infile << name << endl;
-        cout << i << ". " << name << endl;
+      //  if(i!=1){    
+       // if (temp.length() > name.length()) w = 5 - (temp.length() - name.length());
+       // else if(temp.length() < name.length()) w = 5 - (name.length() - temp.length());
+       // else w = 5;
+        //}
+        cout << i << ". " << name <<" - " << priceOfCoffee << " - "<< quantityOfCoffee << endl;
         i++;
+        temp = name;
     }
     cout << " -------------------------------" << endl;
     infile.close();
@@ -221,6 +265,8 @@ void CoffeeFunctions::CoffeeUI(){
 }
 void CoffeeFunctions::SetTypesOfCoffee(TypesOfCoffee coffee[]){
     string name;
+    double price;
+    int cups;
     int i = 0;
     char ans;
     
@@ -228,8 +274,16 @@ void CoffeeFunctions::SetTypesOfCoffee(TypesOfCoffee coffee[]){
         CoffeeUI();
         cout << "Enter the name of the coffee: ";
         cin >> name;
-        system("CLS");
+        if(name == "exit") return;
+        cout << "Enter the price of the coffee: ";
+        cin >> price;
+        cout << "Enter how many cups of coffee you want to add: ";
+        cin >> cups;
         AddCoffeeName(name);
+        AddCoffeePrice(price);
+        AddCoffeeQuantity(cups);
+        system("CLS");
+
         coffee[i].name = name; // napravi neku mandzu da se napravi niz od elemenata koliko ima kafa i da se moze vremenom povecavati
         CoffeeUI();
         cout << "Do you want to add another coffee? (y/n): ";
@@ -259,10 +313,182 @@ int CoffeeFunctions::SizeOfTypesOfCoffee(){
     infile.close();
     return i;
 }
-void CoffeeFunctions::RemoveTypesOfCoffee(TypesOfCoffee coffee[]){
-    fstream file;
-    fstream temp_file;
+void CoffeeFunctions::ChangeCoffeeName(){
+    fstream file, temp_file;
     string choice;
+    char ans;
+    do{
+        CoffeeUI();
+        cout << "Enter the name of the coffee you want to change: ";
+        cin >> choice;
+        if(choice == "exit") return;
+        string name;
+        int g = 0;
+        file.open("header/coffeeNames.txt", ios::in);
+        temp_file.open("header/temp.txt", ios::out);
+        if(!file){
+            cout << "Error opening file where coffee names are stored";
+            exit(1);
+        }
+        if(!temp_file){
+            cout << "Error opening temp files are stored";
+            exit(1);
+        }
+        while(file >> name){
+            if(name == choice){
+                cout << "Enter the new name of the coffee: ";
+                cin >> name;
+                temp_file << name << endl;
+                g++;
+            }
+            else temp_file << name << endl;
+        }
+        if (g == 0) cout << "This coffee name doesn't exist!" << endl;
+        file.close();
+        temp_file.close();
+        remove("header/coffeeNames.txt");
+        rename("header/temp.txt", "header/coffeeNames.txt");
+        system("CLS");
+        CoffeeUI();
+        cout << "Do you want to change another coffee name? (y/n): ";
+        cin >> ans;
+        system("CLS");
+    }while(ans == 'y');    
+}
+
+void CoffeeFunctions::ChangeCoffeePrice(){
+    fstream file1, file2, temp_file;
+    string choice, name;
+    char ans;
+    double price;
+    int g = 0;
+    do{
+        CoffeeUI();
+        cout << "Enter the name of the coffee you want to change: ";
+        cin >> choice;
+        if(choice == "exit") return;
+        file1.open("header/coffeeNames.txt", ios::in);
+        file2.open("header/coffeePrices.txt", ios::in);
+        temp_file.open("header/temp.txt", ios::out);
+        if(!file1){
+            cout << "Error opening file where coffee names are stored";
+            exit(1);
+        }
+        if(!file2){
+            cout << "Error opening file where coffee prices are stored";
+            exit(1);
+        }
+        if(!temp_file){
+            cout << "Error opening temp files are stored";
+            exit(1);
+        }
+        while(file1 >> name){
+            file2 >> price;
+            if(name == choice){
+                cout << "Enter the new price of the coffee: ";
+                cin >> price;
+                temp_file << price << endl;
+                g++;
+            }
+            else temp_file << price << endl;
+        }
+        if (g == 0) cout << "This coffee name doesn't exist!" << endl;
+        file1.close();
+        file2.close();
+        temp_file.close();
+        remove("header/coffeePrices.txt");
+        rename("header/temp.txt", "header/coffeePrices.txt");
+        system("CLS");
+        cout << "Do you want to change another coffee price? (y/n): ";
+        cin >> ans;
+    }while(ans == 'y');
+}
+/*void CoffeeFunctions::RemoveCoffeeName(string choice){
+    fstream file, temp_file;
+    string name;
+    int g = 0;
+    file.open("header/coffeeNames.txt", ios::in);
+    temp_file.open("header/temp.txt", ios::out);
+    if(!file){
+        cout << "Error opening file where coffee names are stored";
+        exit(1);
+    }
+    if(!temp_file){
+        cout << "Error opening temp files are stored";
+        exit(1);
+    }
+    while(file >> name){
+        if(name == choice) g++;
+        if(name != choice) temp_file << name << endl;
+    }
+    if (g == 0) cout << "This coffee name doesn't exist!" << endl;
+    file.close();
+    temp_file.close();
+    file.open("header/coffeeNames.txt", ios::out);
+    temp_file.open("header/temp.txt", ios::in);
+    if(!file){
+        cout << "Error opening file where coffee names are stored";
+        exit(1);
+    }
+    if(!temp_file){
+        cout << "Error opening file where temp coffee names are stored";
+        exit(1);
+    }
+    while(temp_file >> name){
+        file << name << endl;
+    }
+    file.close();
+    temp_file.close();
+    temp_file.open("header/temp.txt", ios::out);
+    temp_file.close();
+}
+
+void CoffeeFunctions::RemoveCoffeePrice(string choice){
+    fstream file, temp_file;
+    string name;
+    int g = 0;
+    file.open("header/coffeePrices.txt", ios::in);
+    temp_file.open("header/temp.txt", ios::out);
+    if(!file){
+        cout << "Error opening file where coffee names are stored";
+        exit(1);
+    }
+    if(!temp_file){
+        cout << "Error opening temp files are stored";
+        exit(1);
+    }
+    while(file >> name){
+        if(name == choice) g++;
+        if(name != choice) temp_file << name << endl;
+    }
+    if (g == 0) cout << "This coffee name doesn't exist!" << endl;
+    file.close();
+    temp_file.close();
+    file.open("header/coffeeNames.txt", ios::out);
+    temp_file.open("header/temp.txt", ios::in);
+    if(!file){
+        cout << "Error opening file where coffee names are stored";
+        exit(1);
+    }
+    if(!temp_file){
+        cout << "Error opening file where temp coffee names are stored";
+        exit(1);
+    }
+    while(temp_file >> name){
+        file << name << endl;
+    }
+    file.close();
+    temp_file.close();
+    temp_file.open("header/temp.txt", ios::out);
+    temp_file.close();
+
+}*/
+void CoffeeFunctions::RemoveTypesOfCoffee(TypesOfCoffee coffee[]){
+    fstream file, file_price, file_quantity;
+    fstream temp_file, temp_fileprice, temp_filequantity;
+    string choice;
+    double price;
+    int quantity;
     char ans;
     int g = 0;
 
@@ -270,25 +496,52 @@ void CoffeeFunctions::RemoveTypesOfCoffee(TypesOfCoffee coffee[]){
         CoffeeUI();
         cout << "Enter the coffee you want to remove: ";
         cin >> choice;
+        if(choice == "exit") return;
         system("CLS");
     // copy the file to another file without copying number
+
         file.open("header/coffeeNames.txt", ios::in);
+        file_price.open("header/coffeePrices.txt", ios::in);
+        file_quantity.open("header/coffeeQuantities.txt", ios::in);
         temp_file.open("header/temp.txt", ios::out);
+        temp_fileprice.open("header/tempPrice.txt", ios::out);
+        temp_filequantity.open("header/tempQuantity.txt", ios::out);
         if(!file){
-            cout << "Error opening file";
+            cout << "Error opening file where coffee names are stored!";
             exit(1);
 
         }
-        if(!temp_file){
-            cout << "Error opening file";
+        if(!file_price){
+            cout << "Error opening file where coffee prices are stored!";
             exit(1);
         }
+        if(!file_quantity){
+            cout << "Error opening file where coffee quantities are stored!";
+            exit(1);
+        }
+        if(!temp_file){
+            cout << "Error opening temp file";
+            exit(1);
+        }
+        if(!temp_fileprice){
+            cout << "Error opening temp file";
+            exit(1);
+        }
+        if(!temp_filequantity){
+            cout << "Error opening temp file";
+            exit(1);
+        }
+
         string name;
         while(file >> name){
+            file_price >> price;
+            file_quantity >> quantity;
             if(name == choice) g++;
 
             if(name != choice){
                 temp_file << name << endl;
+                temp_fileprice << price << endl;
+                temp_filequantity << quantity << endl;
             }
 
         }
@@ -298,25 +551,61 @@ void CoffeeFunctions::RemoveTypesOfCoffee(TypesOfCoffee coffee[]){
         
         //clear coffeeNames.txt
         file.close();
+        file_price.close();
+        file_quantity.close();
         temp_file.close();
+        temp_fileprice.close();
+        temp_filequantity.close();
         file.open("header/coffeeNames.txt", ios::out);
+        file_price.open("header/coffeePrices.txt", ios::out);
+        file_quantity.open("header/coffeeQuantities.txt", ios::out);
         temp_file.open("header/temp.txt", ios::in);
+        temp_fileprice.open("header/tempPrice.txt", ios::in);
+        temp_filequantity.open("header/tempQuantity.txt", ios::in);
         if(!file){
-            cout << "Error opening file";
+            cout << "Error opening file where coffee names are stored!";
+            exit(1);
+        }
+        if(!file_price){
+            cout << "Error opening file where coffee prices are stored!";
+            exit(1);
+        }
+        if(!file_quantity){
+            cout << "Error opening file where coffee quantities are stored!";
             exit(1);
         }
         if(!temp_file){
-            cout << "Error opening file";
+            cout << "Error opening temp file";
+            exit(1);
+        }
+        if(!temp_fileprice){
+            cout << "Error opening temp file";
+            exit(1);
+        }
+        if(!temp_filequantity){
+            cout << "Error opening temp file";
             exit(1);
         }
         while(temp_file >> name){
+            temp_fileprice >> price;
+            temp_filequantity >> quantity;
             file << name << endl;
+            file_price << price << endl;
+            file_quantity << quantity << endl;
         }
         file.close();
+        file_price.close();
+        file_quantity.close();
     // clear temp.txt
         temp_file.close();
         temp_file.open("header/temp.txt", ios::out);
         temp_file.close();
+        temp_fileprice.close();
+        temp_fileprice.open("header/tempPrice.txt", ios::out);
+        temp_fileprice.close();
+        temp_filequantity.close();
+        temp_filequantity.open("header/tempQuantity.txt", ios::out);
+        temp_filequantity.close();
         CoffeeUI();
         cout << "Do you want to remove another coffee (y/n): ";
         cin >> ans;
@@ -493,16 +782,14 @@ void AdminFuncs::Operations(TypesOfCoffee coffeeTypes[]){
                 coffee.RemoveTypesOfCoffee(coffeeTypes);
                 break;
             case 3:
-                cout << "Coming soon!" << endl;
+                coffee.ChangeCoffeePrice();
                
                 break;
             case 4:
                 cout << "Coming soon!" << endl;
-                
                 break;
             case 5:
-                cout << "Coming soon!" << endl;
-                
+                coffee.ChangeCoffeeName();
                 break;
             case 6:
                 cout << "Coming soon!" << endl;

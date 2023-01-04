@@ -36,11 +36,20 @@ class PasswordFunctions{
 class CoffeeFunctions{
     public:
     void AddCoffeeName(std::string); // Dodaje ime kafe u fajl
+    void AddCoffeePrice(double); // Dodaje cijenu kafe u fajl
+    void AddCoffeeQuantity(int); // Dodaje kolicinu kafe u fajl
+   /* void RemoveCoffeeName(std::string); // Brise ime kafe iz fajla
+    void RemoveCoffeePrice(std::string); // Brise cijenu kafe iz fajla
+    void RemoveCoffeeQuantity(std::string); // Brise kolicinu kafe iz fajla */
+    void ChangeCoffeeName(); // Mijenja ime kafe
+    void ChangeCoffeePrice(); // Mijenja cijenu kafe
+    void ChangeCoffeeQuantity(); // Mijenja kolicinu kafe
     void CoffeeUI();
     void SetTypesOfCoffee(TypesOfCoffee[]); // Postavlja podatke o kafama
     void RemoveTypesOfCoffee(TypesOfCoffee[]); // Brise podatke o kafama
     int SizeOfTypesOfCoffee(); // Vraca broj vrsta kafe
     bool CheckIfCoffeeNameExists(std::string); // Provjerava da li kafa postoji
+
 };
 class ProgramFuncs{
     public:
