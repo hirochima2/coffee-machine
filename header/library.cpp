@@ -230,11 +230,13 @@ void CoffeeFunctions::AddCoffeeQuantity(int quantity){
 }
 void CoffeeFunctions::UserCoffeeUI(){
     // coffee names from file and in an ordered list
-    fstream infile, price;
+    fstream infile, price, quantity;
     string name;
     double priceOfCoffee;
+    int quantityOfCoffee;
     infile.open("header/coffeeNames.txt", ios::in);
     price.open("header/coffeePrices.txt", ios::in);
+    quantity.open("header/coffeeQuantities.txt", ios::in);
 
     if(!price){
         cout << "Error opening file where coffee prices are stored!";
@@ -252,19 +254,22 @@ void CoffeeFunctions::UserCoffeeUI(){
    // int w = 5;
     while(infile >> name){
         price >> priceOfCoffee;
+        quantity >> quantityOfCoffee;
         // infile << name << endl;
       //  if(i!=1){    
        // if (temp.length() > name.length()) w = 5 - (temp.length() - name.length());
        // else if(temp.length() < name.length()) w = 5 - (name.length() - temp.length());
        // else w = 5;
         //}
-        cout << i << ". " << name <<": " << priceOfCoffee <<" KM"<< endl;
+       if(quantityOfCoffee > 0) cout << i << ". " << name <<": " << priceOfCoffee <<" KM"<<quantityOfCoffee<< endl;
+       else cout << i << ". "<<"**"<< name <<"*"<<"*:*" <<"*"<< priceOfCoffee <<"*"<<"*KM**" << " (Out of stock)" << endl;
         i++;
         temp = name;
     }
     cout << "---------------------------------------" << endl;
     infile.close();
     price.close();
+    quantity.close();
 }
 void CoffeeFunctions::CoffeeUI(){
     // coffee names from file and in an ordered list
@@ -812,15 +817,198 @@ void UserFuncs::UserUI(){
     cout << "---------------------------------------" << endl;
     coffee.UserCoffeeUI();
 }
-void UserFuncs::BuyCoffee(int userChoice){
-    cout << "Coming soon..." << endl;
-    CoffeeFunctions coffee;
-    int a;
-    a = coffee.CheckHowManyCoffeeTypes();
-    cout << a << endl;
-    system("PAUSE");
-    system("CLS");
+void UserFuncs::PayingUI(double money, double price2){
+    cout << "You have entered " << money << " KM!" << endl;
+    cout << "---------------------------------------" << endl;
+    if(price2 > 0){
+        cout << "You need to enter " << price2 << " KM more" << endl;
+        cout << "---------------------------------------" << endl;
+    }
+    else if(price2 == 0){
+        cout << "You have entered enough money!" << endl;
+        cout << "---------------------------------------" << endl;
+    }
+    else{
+        cout << "You have entered too much money!" << endl;
+        cout << "Change coming soon..." << endl;
+        cout << "---------------------------------------" << endl;
+    }
+
 }
+bool UserFuncs::CheckIfCoffeeisAvailable(int userChoice){
+    int g = 1;
+    fstream quantity;
+    int quantity2;
+    bool returner;
+    quantity.open("header/coffeeQuantities.txt", ios::in);
+    if(!quantity){
+        cout << "Error opening file where coffee quantity is stored!" << endl;
+        system("PAUSE");
+        exit(1);
+    }
+    while(quantity >> quantity2){
+        if(g == userChoice){
+            break;
+        }
+        g++;
+    }
+    quantity.close();
+    if(quantity2 > 0){
+        returner = true;
+    }
+    else{
+        returner = false;
+    }
+    
+    return returner;
+}
+bool UserFuncs::CheckIfEnoughMoney(int userChoice){
+    bool returner, nomoney = false;
+    int coin,g = 1;
+    fstream prices, coins;
+    double money, price, price2;
+    
+    prices.open("header/coffeePrices.txt", ios::in);
+    coins.open("header/coins.txt", ios::in);
+    if(!prices){
+        cout << "Error opening file where coffee prices are stored!" << endl;
+        system("PAUSE");
+        exit(1);
+    }
+    while(prices >> price){
+        if(g == userChoice){
+            break;
+        }
+        g++;
+    }
+    prices.close();
+    price2 = price;
+    do{
+        system("CLS");
+        cout << "---------------------------------------" << endl;
+        cout << "Total cost of your coffee is " << price << " KM" << endl;
+        cout << "---------------------------------------" << endl;
+        cout << "You enter money coin by coin, for example: " << endl;
+        cout << "If the coffee is 1.50 KM, you enter 1 KM, then 0.50 KM" << endl;
+        cout << "Or you enter 0.5 KM and then 1 KM" << endl;
+        cout << "---------------------------------------" << endl;
+        cout << "If you don't have enough money enter 0 " << endl;
+        cout << "---------------------------------------" << endl; 
+        cout << "Enter money: ";
+        cin >> money;
+        if(money == 0){
+            nomoney = true;
+            price2 = 0;
+            break;
+        }
+        if(money == 0.5){
+            price2-=0.5;
+            PayingUI(money,price2);
+            nomoney = false;
+            system("PAUSE");
+        }
+        else if(money == 1){
+            price2 -= 1;
+            PayingUI(money,price2);
+            nomoney = false;
+            system("PAUSE");
+        }
+        else if(money == 2) {
+            price2 -= 2;
+            PayingUI(money,price2);
+            nomoney = false;
+            system("PAUSE");
+        }
+        else if(money == 5) {
+            price2 -= 5;
+            PayingUI(money,price2);
+            nomoney = false;
+            system("PAUSE");
+        }
+    }while(price2 > 0);
+    if(price2 <= 0 && !nomoney ) returner = true;
+    else if(price2 == 0 && nomoney) returner = false;
+    return returner;
+}
+void UserFuncs::BuyCoffee(int userChoice){
+   // cout << "Coming soon..." << endl;
+    CoffeeFunctions coffee;
+    fstream file, file_price, file_quantity;
+    fstream temp_file, temp_fileprice, temp_filequantity;
+    string name;
+    double price;
+    bool enoughMoney;
+    int quantity;
+    int g = 0;
+    bool available = CheckIfCoffeeisAvailable(userChoice);
+   
+    if(!available){
+        cout << "Coffee currently not available, please select another one!" << endl;
+        cout << "Thank you for your understanding!" << endl;
+        system("PAUSE");
+    }
+   else if(available){
+        enoughMoney = CheckIfEnoughMoney(userChoice);
+        if(enoughMoney){
+                file.open("header/coffeeNames.txt", ios::in);
+                file_price.open("header/coffeePrices.txt", ios::in);
+                file_quantity.open("header/coffeeQuantities.txt", ios::in);
+                temp_filequantity.open("header/tempQuantity.txt", ios::out);
+                if(!file){
+                    cout << "Error opening file where coffee names are stored" << endl;
+                    system("PAUSE");
+                    exit(1);
+                }
+                if(!file_price){
+                    cout << "Error opening file where coffee prices are stored" << endl;
+                    system("PAUSE");
+                    exit(1);
+                }
+                if(!file_quantity){
+                    cout << "Error opening file where coffee quantities are stored" << endl;
+                    system("PAUSE");
+                    exit(1);
+                }
+                if(!temp_filequantity){
+                    cout << "Error opening temp file for coffee quantity" << endl;
+                    system("PAUSE");
+                    exit(1);
+                }
+            	while(file >> name){
+                    file_price >> price;
+                    file_quantity >> quantity;
+                    if(g == userChoice-1){
+                       /* if(quantity == 0){
+                            cout << "Coffee currently not available, please select another one!" << endl;
+                            cout << "Thank you for your understanding!" << endl;
+                            quantity = 0;
+                        }*/
+                    
+                  //  else{
+                        cout << "You have bought " << name << " for " << price << " KM" << endl;
+                        quantity--;
+                    }
+                    temp_filequantity << quantity << endl;
+                    g++;
+                }
+                
+            file.close();
+            file_price.close();
+            file_quantity.close();
+            temp_filequantity.close();
+            remove("header/coffeeQuantities.txt");
+            rename("header/tempQuantity.txt", "header/coffeeQuantities.txt");
+        }
+            if(!enoughMoney){
+            cout << "You don't have enough money to buy this coffee!" << endl;
+           // system("PAUSE");
+           // system("CLS");
+            }
+            system("PAUSE");
+            system("CLS");
+        }
+       
+    }
 void UserFuncs::BeginBuying(int userChoice){
     CoffeeFunctions coffee;
     int coffeeTypes = coffee.CheckHowManyCoffeeTypes();
@@ -833,6 +1021,7 @@ void UserFuncs::BeginBuying(int userChoice){
     }
 }
 void ProgramFuncs::WeeklyReport(){
+    system("CLS");
     cout << "Coming soon..." << endl;
     system("PAUSE");
     system("CLS");

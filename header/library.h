@@ -84,5 +84,8 @@ class UserFuncs{
     void UserUI();
     void BuyCoffee(int);
     void BeginBuying(int);
+    bool CheckIfEnoughMoney(int);
+    void PayingUI(double, double);
+    bool CheckIfCoffeeisAvailable(int);
 
 };
