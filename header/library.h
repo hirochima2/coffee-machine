@@ -45,10 +45,12 @@ class CoffeeFunctions{
     void ChangeCoffeePrice(); // Mijenja cijenu kafe
     void ChangeCoffeeQuantity(); // Mijenja kolicinu kafe
     void CoffeeUI();
+    void UserCoffeeUI();
     void SetTypesOfCoffee(TypesOfCoffee[]); // Postavlja podatke o kafama
     void RemoveTypesOfCoffee(TypesOfCoffee[]); // Brise podatke o kafama
     int SizeOfTypesOfCoffee(); // Vraca broj vrsta kafe
     bool CheckIfCoffeeNameExists(std::string); // Provjerava da li kafa postoji
+    int CheckHowManyCoffeeTypes(); // Provjerava koliko vrsta kafe ima
 
 };
 class ProgramFuncs{
@@ -78,5 +80,8 @@ class AdminFuncs{
     
 };
 class UserFuncs{
+    public:
+    void UserUI();
+    void BuyCoffee(int);
 
 };
