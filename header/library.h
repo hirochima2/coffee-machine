@@ -62,7 +62,7 @@ class ProgramFuncs{
     void ExitProgram();
     void WrongInput();
     void StartProgram();
-    
+    void WeeklyReport();
 };
 class AdminFuncs{
     public: 
@@ -83,5 +83,6 @@ class UserFuncs{
     public:
     void UserUI();
     void BuyCoffee(int);
+    void BeginBuying(int);
 
 };

@@ -821,6 +821,22 @@ void UserFuncs::BuyCoffee(int userChoice){
     system("PAUSE");
     system("CLS");
 }
+void UserFuncs::BeginBuying(int userChoice){
+    CoffeeFunctions coffee;
+    int coffeeTypes = coffee.CheckHowManyCoffeeTypes();
+    if(userChoice > 0 && userChoice <= coffeeTypes) BuyCoffee(userChoice);
+    else{
+        system("CLS");
+        cout << "Error: Invalid input!" << endl;
+        system("PAUSE");
+        system("CLS");
+    }
+}
+void ProgramFuncs::WeeklyReport(){
+    cout << "Coming soon..." << endl;
+    system("PAUSE");
+    system("CLS");
+}
 void ProgramFuncs::UserMode(){
     UserFuncs user;
     CoffeeFunctions coffee;
@@ -833,10 +849,7 @@ void ProgramFuncs::UserMode(){
         cin >> userChoice;
         switch(userChoice){
             case 0:
-                system("CLS");
-                cout << "Coming soon..." << endl;
-                system("PAUSE");
-                system("CLS");
+                WeeklyReport();
                 //user.WeeklyReport();
                 break;
             case 404:
@@ -846,13 +859,7 @@ void ProgramFuncs::UserMode(){
                 break;
             default:
                 system("CLS");
-                if(userChoice > 0 && userChoice <= coffeeTypes) user.BuyCoffee(userChoice);
-                else{
-                    system("CLS");
-                    cout << "Error: Invalid input!" << endl;
-                    system("PAUSE");
-                    system("CLS");
-                }
+                user.BeginBuying(userChoice);
                 break;
         }
     }while(userChoice != 404);
