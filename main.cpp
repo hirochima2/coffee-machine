@@ -10,6 +10,5 @@ int main(){
    program.BeginProgram();
     // cin.get();
     // cout << "Press any key to continue...";
-    getch();
     return 0;
 }

@@ -52,12 +52,17 @@ bool PasswordFunctions::CheckIfFirstPassword(){ // Provjerava da li je prvi put 
 }
 void PasswordFunctions::setFirstPassword(string password){ // Ako je prvi put da se ulazi u program, onda se pomocu
     if(CheckIfFirstPassword()){                           // ove funkcije postavlja prva sifra
-        fstream outFile;
+        fstream outFile,tempFile;
         setPassword(password);
         string backupPass = password;
         outFile.open("header/password.txt", ios::out);
+        tempFile.open("header/tempPassword.txt", ios::out);
         if(!outFile){
-            cout << "Error opening file";
+            cout << "Error opening password file";
+            exit(1);
+        }
+        if(!tempFile){
+            cout << "Error opening temp file";
             exit(1);
         }
         int size = backupPass.size();
@@ -67,8 +72,13 @@ void PasswordFunctions::setFirstPassword(string password){ // Ako je prvi put da
             }
             else backupPass[i] = backupPass[i] - 2;
         }
-        outFile << backupPass;
+        tempFile << backupPass;
+        //replace tempPassword.txt with password.txt
         outFile.close();
+        tempFile.close();
+        remove("header/password.txt");
+        rename("header/tempPassword.txt", "header/password.txt");
+
     }
 }
 void PasswordFunctions::setForgottenPassword(string password){ // Ako se zaboravi sifra, onda se pomocu ove funkcije
@@ -242,7 +252,7 @@ void CoffeeFunctions::CoffeeUI(){
     }
     int i = 1;
     cout << "Type of coffee - Price - Quantity" << endl;
-    cout << "Type exit to go back to main menu" << endl;
+    
     cout << " -------------------------------" << endl;
     string temp;
    // int w = 5;
@@ -355,7 +365,56 @@ void CoffeeFunctions::ChangeCoffeeName(){
         system("CLS");
     }while(ans == 'y');    
 }
-
+void CoffeeFunctions::ChangeCoffeeQuantity(){
+    fstream file,file2, temp_file;
+    string choice;
+    char ans;
+    do{
+        CoffeeUI();
+        cout << "Enter the name of the coffee you want to change: ";
+        cin >> choice;
+        if(choice == "exit") return;
+        string name;
+        int quantity;
+        int g = 0;
+        file.open("header/coffeeNames.txt", ios::in);
+        file2.open("header/coffeeQuantities.txt", ios::in);
+        temp_file.open("header/tempQuantity.txt", ios::out);
+        if(!file){
+            cout << "Error opening file where coffee names are stored";
+            exit(1);
+        }
+        if(!file2){
+            cout << "Error opening file where coffee quantities are stored";
+            exit(1);
+        }
+        if(!temp_file){
+            cout << "Error opening temp files are stored";
+            exit(1);
+        }
+        while(file >> name){
+            file2 >> quantity;
+            if(name == choice){
+                cout << "Enter the new quantity of the coffee: ";
+                cin >> quantity;
+                temp_file << quantity << endl;
+                g++;
+            }
+            else temp_file << quantity << endl;
+        }
+        if (g == 0) cout << "This coffee name doesn't exist!" << endl;
+        file.close();
+        file2.close();
+        temp_file.close();
+        remove("header/coffeeQuantities.txt");
+        rename("header/tempQuantity.txt", "header/coffeeQuantities.txt");
+        system("CLS");
+        CoffeeUI();
+        cout << "Do you want to change another coffee name? (y/n): ";
+        cin >> ans;
+        system("CLS");
+    }while(ans == 'y');
+}
 void CoffeeFunctions::ChangeCoffeePrice(){
     fstream file1, file2, temp_file;
     string choice, name;
@@ -621,6 +680,7 @@ void ProgramFuncs::AdminMode(){
     string password, coffeName;
     AdminFuncs admin;
     bool wrongPass = false;
+    cout << "---------------------------------------" << endl;
     if(pass.CheckIfFirstPassword()){ cout << "First time running program!" << endl;
    // else cout << "Welcome back!" << endl;
     if(pass.CheckBackupPassIsEmpty()){
@@ -642,9 +702,18 @@ void ProgramFuncs::AdminMode(){
         for(int i = 0; i < 3; i++){
             if(i==2){
                 cout << "ERROR: You have entered wrong password 3 times! Please contact system administrator(105)" << endl;
-                wrongPass = true;
-                system("PAUSE");
-                exit(1);
+                cout << "Did you forget your password? (y/n): ";
+                char ans;
+                cin >> ans;
+                if(ans == 'y'){
+                    admin.ChangePass(password,pass);
+                }
+                else{
+                    wrongPass = true;
+                    cout << "Program will now be terminated!" << endl;
+                    system("PAUSE");
+                    exit(1);
+                }
             }
             else if (check == true){
                 cout << "Password is correct!" << endl;
@@ -652,10 +721,11 @@ void ProgramFuncs::AdminMode(){
                 i = 4;
                 break;
             }
-            else cout << "Password is incorrect!" << endl;
+            else{ cout << "Password is incorrect!" << endl;
             cout << "Enter password: ";
             cin >> password;
             check = pass.CheckPassword(password);
+            }
         }
     }
     if(wrongPass == true){	
@@ -670,33 +740,74 @@ void ProgramFuncs::AdminMode(){
     // cin.get();
     // cout << "Press any key to continue...";
 //}
-void ProgramFuncs::BeginProgram(){
-    int choice;
+void ProgramFuncs::UserMode(){
+    system("CLS");
+    cout << "Coming soon..." << endl;
+    cout << "You will be redirected to the main menu!" << endl;
+    system("PAUSE");
+
+}
+void ProgramFuncs::MainMenUI(){
+    system("CLS");
+    cout << "----------------------------------------" << endl;
     cout << "Welcome to the coffee machine!" << endl;
     cout << "Choose between the following options: " << endl;
     cout << "1. User mode " << endl;
     cout << "2. Admin mode " << endl;
-    cin >> choice;
-    switch(choice){
-        case 1:
-            //UserMode();
-            cout << "Coming soon...";
-            break;
-        case 2:
-            AdminMode();
-            break;
-        default:
-            cout << "Invalid choice!" << endl;
-            do{
-                cout << "Choose between the following options: " << endl;
-                cout << "1. User mode " << endl;
-                cout << "2. Admin mode " << endl;
-                cin >> choice;}while(choice != 1 || choice != 2);
-            break;
+    cout << "3. Exit program " << endl;
+    cout << "----------------------------------------" << endl;
+    cout << "Select option: ";
+}
+void ProgramFuncs::ExitProgram(){
+    system("CLS");
+    cout << "Thank you for using our program!" << endl;
+    cout << "Program will now be terminated!" << endl;
+    system("PAUSE");
+}
+void ProgramFuncs::WrongInput(){
+    system("CLS");
+    cout << "----------------------------------------" << endl;	
+    cout << "Invalid choice!" << endl;
+    cout << "You will be redirected to the main menu!" << endl;
+    cout << "----------------------------------------" << endl;
+    system("PAUSE");
+}
+void ProgramFuncs::StartProgram(){
+    system("CLS");
+    cout << "----------------------------------------" << endl;
+    cout << "Welcome to the coffee machine!" << endl;
+    cout << "Program will now start!" << endl;
+    cout << "----------------------------------------" << endl;
+    system("PAUSE");
+}
+void ProgramFuncs::BeginProgram(){
+    int choice;
+    StartProgram();
+    do{
+        MainMenUI();
+        
+        cin >> choice;
+        switch(choice){
+            case 1:
+                UserMode();
+                break;
+            case 2:
+                AdminMode();
+                break;
+            case 3:
+                ExitProgram();
+                exit(1);
+                break;
+            default:
+                WrongInput();
+                break;
     }
+    }while(choice != 3);
 }
 void AdminFuncs::ChangePass(string password, PasswordFunctions pass){
     string answer;
+    fstream file, temp_file;
+    ProgramFuncs prog;
             bool repeat = false;
             cout << "Answer this question: Describe Aldin in one word: ";
             cin >> answer;
@@ -708,9 +819,18 @@ void AdminFuncs::ChangePass(string password, PasswordFunctions pass){
                 cout << "Enter new password again: ";
                 cin >> password;
                 if(answer == password){
+                    file.open("header/password.txt", ios::out);
+                    temp_file.open("header/temp.txt", ios::out);
+                    file.close();
+                    temp_file.close();
+                    remove("header/password.txt");
+                    rename("header/temp.txt", "header/password.txt");
+                    
                     pass.setFirstPassword(password);
                     cout << "Password has been changed" << endl;
                     repeat=true;
+                    system("PAUSE");
+                    prog.BeginProgram();
                 }
                 else{
                     //enter password until they match
@@ -725,8 +845,16 @@ void AdminFuncs::ChangePass(string password, PasswordFunctions pass){
                 if(answer == password){
                     pass.setFirstPassword(password);
                     cout << "Password has been changed" << endl;
+                    system("PAUSE");
+                    prog.BeginProgram();
                 }
         }
+   }
+   else{
+        cout << "Answer is incorrect! " << endl;
+        cout << "Program will now be terminated!" << endl;
+        system("PAUSE");
+        exit(1);
    }
 }
 void AdminFuncs::NoBackupPass(){
@@ -750,6 +878,7 @@ void AdminFuncs::FirstPassword(string password){
     cout << "Enter password: ";
     cin >> password;
 }
+
 void AdminFuncs::AdminUI(){
             cout << "----------------------------------------" << endl;
             cout << "Welcome to admin mode!" << endl;
@@ -759,14 +888,17 @@ void AdminFuncs::AdminUI(){
             cout << "3. Change price of coffee" << endl;
             cout << "4. Change how many cups are left" << endl;
             cout << "5. Change coffee name" << endl;
-            cout << "6. Weekly report " << endl;
-            cout << "7. Exit " << endl;
+            cout << "6. Display what coffees are available" << endl;
+            cout << "7. Check coin state" << endl;
+            cout << "8. Weekly report " << endl;
+            cout << "9. Exit admin mode" << endl;
             cout << "----------------------------------------" << endl;
             cout << "Choose option: ";
             
 }
 void AdminFuncs::Operations(TypesOfCoffee coffeeTypes[]){
         CoffeeFunctions coffee;
+        ProgramFuncs prog;
         int choice;
         system("PAUSE");
         system("CLS");
@@ -776,34 +908,48 @@ void AdminFuncs::Operations(TypesOfCoffee coffeeTypes[]){
            system("CLS");
            switch(choice){
             case 1:
+                cout << "Type exit to go back to main menu" << endl;
                 coffee.SetTypesOfCoffee(coffeeTypes);
                 break;
             case 2:
+                cout << "Type exit to go back to main menu" << endl;
                 coffee.RemoveTypesOfCoffee(coffeeTypes);
                 break;
             case 3:
+                cout << "Type exit to go back to main menu" << endl;
                 coffee.ChangeCoffeePrice();
-               
                 break;
             case 4:
-                cout << "Coming soon!" << endl;
+                //cout << "Coming soon!" << endl;
+                cout << "Type exit to go back to main menu" << endl;
+                coffee.ChangeCoffeeQuantity();
                 break;
             case 5:
+                cout << "Type exit to go back to main menu" << endl;
                 coffee.ChangeCoffeeName();
                 break;
             case 6:
-                cout << "Coming soon!" << endl;
+                coffee.CoffeeUI();
                // system("PAUSE");
                // system("CLS");
                 break;
             case 7:
-                cout << "Exiting program..." << endl;
+               // cout << "Coming soon!" << endl;
+               ManipulateCoinState();
+                break;
+            case 8:
+                cout << "Coming soon!" << endl;
+                break;
+            case 9:
+                system("CLS");
+                cout << "Exiting admin menu..." << endl;
+                system("PAUSE");
                 break;
             default:
                 int choi;
                // while(choi > 7 || choi < 1){
                     cout << "Invalid choice!" << endl;
-                    cout << "You will be redirected to the main menu!" << endl;
+                    cout << "You will be redirected to the admin menu!" << endl;
                   //  system("PAUSE");
                    // system("CLS");
                  //   AdminUI();
@@ -811,12 +957,168 @@ void AdminFuncs::Operations(TypesOfCoffee coffeeTypes[]){
                // }
                 break;
            }
-        if(choice != 7){
+        if(choice != 9){
             system("PAUSE");
             system("CLS");
         }
-        }while(choice != 7);
+        }while(choice != 9);
 
         //coffee.SetTypesOfCoffee(coffeeTypes);
         //coffee.RemoveTypesOfCoffee(coffeeTypes); 
+}
+void AdminFuncs::CoinUI(int coins[]){
+    system("CLS");
+    cout << "----------------------------------------" << endl;
+    cout << "Coins in machine: " << endl;
+    cout << "1. 0.5 KM: " << coins[0] << endl;
+    cout << "2. 1 KM: " << coins[1] << endl;
+    cout << "3. 2 KM: " << coins[2] << endl;
+    cout << "4. 5 KM: " << coins[3] << endl;
+    cout << "----------------------------------------" << endl;
+}
+void AdminFuncs::AddCoins(int coins[]){ // uradi UI
+    int choice;
+    int amount;
+    CoinUI(coins);
+    cout << "Choose which coin you want to add: ";
+    cin >> choice;
+    cout << "How many coins do you want to add? ";
+    cin >> amount;
+    switch(choice){
+        case 1:
+            coins[0] += amount;
+            break;
+        case 2:
+            coins[1] += amount;
+            break;
+        case 3:
+            coins[2] += amount;
+            break;
+        case 4:
+            coins[3] += amount;
+            break;
+        default:
+            cout << "Invalid choice!" << endl;
+            break;
+    }
+    fstream file;
+    file.open("header/coins.txt", ios::out);
+    for(int i = 0; i < 4; i++){
+        file << coins[i] << endl;
+    }
+    file.close();
+    file.open("header/coins.txt", ios::in);
+    for(int i = 0; i < 4; i++){
+        file >> coins[i];
+    }
+    CoinUI(coins);
+    system("PAUSE");
+    system("CLS");
+}
+void AdminFuncs::RemoveCoins(int coins[]){ // uradi UI
+    // cout << "Coming soon! " << endl;
+    int choice, amount;
+    char answer;
+    do{
+        system("CLS");
+        CoinUI(coins);
+        cout << "Choose which coin you want to remove: ";
+        cin >> choice;
+        cout << "----------------------------------------" << endl;
+        cout << "How many coins do you want to remove? ";
+        cin >> amount;
+        switch(choice){
+            case 1:
+                if(coins[0] - amount < 0){
+                    cout << "You can't remove more coins than there are in the machine!" << endl;
+                    system("PAUSE");
+                    system("CLS");
+                    break;
+                }
+                else coins[0] -= amount;
+                break;
+            case 2:
+                if(coins[1] - amount < 0){
+                    cout << "You can't remove more coins than there are in the machine!" << endl;
+                    system("PAUSE");
+                    system("CLS");
+                    break;
+                }
+                else coins[1] -= amount;
+                break;
+            case 3:
+                if(coins[2] - amount < 0){
+                    cout << "You can't remove more coins than there are in the machine!" << endl;
+                    system("PAUSE");
+                    system("CLS");
+                    break;
+                }
+                else coins[2] -= amount;
+                break;
+            case 4:
+                if(coins[3] - amount < 0){
+                    cout << "You can't remove more coins than there are in the machine!" << endl;
+                    system("PAUSE");
+                    system("CLS");
+                    break;
+                }
+                else coins[3] -= amount;
+                break;
+            default:
+                cout << "Invalid choice!" << endl;
+                break;
+        }
+        fstream file;
+        file.open("header/coins.txt", ios::out);
+        for(int i = 0; i < 4; i++){
+            file << coins[i] << endl;
+        }
+        file.close();
+        file.open("header/coins.txt", ios::in);
+        for(int i = 0; i < 4; i++){
+            file >> coins[i];
+        }
+        CoinUI(coins);
+        cout << "----------------------------------------" << endl;
+        cout << "Do you want to remove more coins? (y/n)" << endl;
+        cin >> answer;
+    }while(answer == 'y' || answer == 'Y');
+}
+void AdminFuncs::ManipulateCoinState(){ // uradi UI
+    fstream file;
+    int choice;
+    do{
+        file.open("header/coins.txt", ios::in);
+        int coins[4];
+        for(int i = 0; i < 4; i++){
+            file >> coins[i];
+        }
+        file.close();
+        CoinUI(coins);
+        cout << "Do you want to add or remove coins? " << endl;
+        cout << "----------------------------------------" << endl;
+        cout << "1. Add coins " << endl;
+        cout << "2. Remove coins " << endl;
+        cout << "3. Exit " << endl;
+        cout << "----------------------------------------" << endl;
+        cout << "Choose option: ";
+        cin >> choice;
+        switch(choice){
+            case 1:
+                AddCoins(coins);
+                break;
+            case 2:
+                RemoveCoins(coins);
+                break;
+            case 3:
+                system("CLS");
+                cout << "Exiting to admin menu..." << endl;
+                break;
+            default:
+                system("CLS");
+                cout << "Invalid choice!" << endl;
+                break;
+        }
+
+    }while(choice != 3);
 }

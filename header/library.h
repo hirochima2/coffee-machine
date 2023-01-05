@@ -55,6 +55,11 @@ class ProgramFuncs{
     public:
     void BeginProgram(); // Ova funkcija se poziva na pocetku programa i ona provjerava da li je prvi put da se ulazi u program
     void AdminMode();
+    void UserMode();
+    void MainMenUI();
+    void ExitProgram();
+    void WrongInput();
+    void StartProgram();
     
 };
 class AdminFuncs{
@@ -65,4 +70,13 @@ class AdminFuncs{
     void Operations(TypesOfCoffee[]);
     // create a function that uses int as parameter and returns int
     void AdminUI();
+    void ManipulateCoinState();
+    void AddCoins(int[]);
+    void RemoveCoins(int[]);
+    void CoinUI(int[]);
+
+    
+};
+class UserFuncs{
+
 };
