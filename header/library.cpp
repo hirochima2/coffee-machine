@@ -1,9 +1,227 @@
 
 #include "library.h"
 using namespace std;
+int count = 0;
+void ProgramFuncs::BeginProgram(){
+    int choice;
+    StartProgram();
+    WeeklyReportCount();
+    do{
+        MainMenUI();
+        
+        cin >> choice;
+        switch(choice){
+            case 1:
+                UserMode();
+                break;
+            case 2:
+                AdminMode();
+                break;
+            case 3:
+                ExitProgram();
+                exit(1);
+                break;
+            default:
+                WrongInput();
+                break;
+    }
+    }while(choice != 3);
+}
+void ProgramFuncs::UserMode(){
+    UserFuncs user;
+    CoffeeFunctions coffee;
+    int userChoice;
+    int coffeeTypes = coffee.CheckHowManyCoffeeTypes();
+    do{
+        system("CLS");
+        user.UserUI();
+        cout << "Select coffee: ";
+        cin >> userChoice;
+        switch(userChoice){
+            case 0:
+                WeeklyReport();
+                break;
+            case 404:
+                system("CLS");
+                cout << "You will be redirected to the main menu!" << endl;
+                system("PAUSE");
+                break;
+            default:
+                system("CLS");
+                user.BeginBuying(userChoice);
+                break;
+        }
+    }while(userChoice != 404);
+}
+void ProgramFuncs::AdminMode(){
+    PasswordFunctions pass;
+    CoffeeFunctions coffee;
+    TypesOfCoffee coffeeTypes[100];
+    string password, coffeName;
+    AdminFuncs admin;
+    bool wrongPass = false;
+    system("CLS");
+    cout << "---------------------------------------" << endl;
+    if(pass.CheckIfFirstPassword()){ cout << "First time running program!" << endl;
+   
+    if(pass.CheckBackupPassIsEmpty()){
+        admin.NoBackupPass();
+    }
+    admin.FirstPassword(password);
+    }
+    else{
+        cout << "Welcome back!" << endl;
+        cout << "Enter password: ";
+        cin >> password;
+        cout << "---------------------------------------" << endl;
+    }
+    bool check = pass.CheckPassword(password);
+    if(check == true){
+        system("CLS");
+        cout << "Password is correct!" << endl;
+        admin.Operations(coffeeTypes);
+    }
+    else{
+        for(int i = 0; i < 3; i++){
+            if(i==2 && check == false){
+                cout << "ERROR: You have entered wrong password 3 times! Please contact system administrator(105)" << endl;
+                cout << "Did you forget your password? (y/n): ";
+                char ans;
+                cin >> ans;
+                if(ans == 'y'){
+                    admin.ChangePass(password,pass);
+                }
+                else{
+                    wrongPass = true;
+                    cout << "Program will now be terminated!" << endl;
+                    system("PAUSE");
+                    exit(1);
+                }
+            }
+            else if (check == true){
+                system("CLS");
+                cout << "Password is correct!" << endl;
+                admin.Operations(coffeeTypes);
+                i = 4;
+                break;
+            }
+            else{ cout << "Password is incorrect!" << endl;
+            cout << "Enter password: ";
+            cin >> password;
+            cout << "---------------------------------------" << endl;
+            check = pass.CheckPassword(password);
+            }
+        }
+    }
+    if(wrongPass == true){	
+        if(!pass.CheckBackupPassIsEmpty()){
+                admin.ChangePass(password,pass);
+                }
 
-
-string PasswordFunctions::getPassword(){ // neka vrsta pointera ne znam radili smo na faksu
+            }
+            
+        }
+void AdminFuncs::Operations(TypesOfCoffee coffeeTypes[]){
+        CoffeeFunctions coffee;
+        ProgramFuncs prog;
+        int choice;
+        system("PAUSE");
+        system("CLS");
+        do{
+           AdminUI();
+           cin >> choice;
+           system("CLS");
+           switch(choice){
+            case 1:
+                cout << "Type exit to go back to main menu" << endl;
+                coffee.SetTypesOfCoffee(coffeeTypes);
+                break;
+            case 2:
+                cout << "Type exit to go back to main menu" << endl;
+                coffee.RemoveTypesOfCoffee(coffeeTypes);
+                break;
+            case 3:
+                cout << "Type exit to go back to main menu" << endl;
+                coffee.ChangeCoffeePrice();
+                break;
+            case 4:
+                cout << "Type exit to go back to main menu" << endl;
+                coffee.ChangeCoffeeQuantity();
+                break;
+            case 5:
+                cout << "Type exit to go back to main menu" << endl;
+                coffee.ChangeCoffeeName();
+                break;
+            case 6:
+                coffee.CoffeeUI();
+                break;
+            case 7:
+               ManipulateCoinState();
+                break;
+            case 8:
+                prog.WeeklyReport();
+                break;
+            case 9:
+                system("CLS");
+                cout << "Exiting admin menu..." << endl;
+                system("PAUSE");
+                break;
+            default:
+                int choi;
+                    cout << "Invalid choice!" << endl;
+                    cout << "You will be redirected to the admin menu!" << endl;
+           }
+        if(choice != 9){
+            system("PAUSE");
+            system("CLS");
+        }
+        }while(choice != 9);
+}
+void ProgramFuncs::StartProgram(){
+    system("CLS");
+    cout << "----------------------------------------" << endl;
+    cout << "Welcome to the coffee machine!" << endl;
+    cout << "Program will now start!" << endl;
+    cout << "----------------------------------------" << endl;
+    system("PAUSE");
+}
+void ProgramFuncs::ExitProgram(){
+    system("CLS");
+    cout << "Thank you for using our program!" << endl;
+    cout << "Program will now be terminated!" << endl;
+    system("PAUSE");
+}
+void ProgramFuncs::WrongInput(){
+    system("CLS");
+    cout << "----------------------------------------" << endl;	
+    cout << "Invalid choice!" << endl;
+    cout << "You will be redirected to the main menu!" << endl;
+    cout << "----------------------------------------" << endl;
+    system("PAUSE");
+}
+void ProgramFuncs::WeeklyReportCount(){
+    fstream file;
+    file.open("header/reportCount.txt", ios::in);
+    if(!file){
+        cout << "Error opening file where report count is stored!" << endl;
+        system("PAUSE");
+        exit(1);
+    }
+    file >> count;
+    file.close();
+}
+void ProgramFuncs::MainMenUI(){
+    system("CLS");
+    cout << "----------------------------------------" << endl;
+    cout << "Welcome to the coffee machine!" << endl;
+    cout << "Choose between the following options: " << endl;
+    cout << "1. User mode " << endl;
+    cout << "2. Admin mode " << endl;
+    cout << "3. Exit program " << endl;
+    cout << "----------------------------------------" << endl;
+    cout << "Select option: ";
+}
+string PasswordFunctions::getPassword(){ // neka vrsta pointera
     return this->password;
 }
 
@@ -73,7 +291,6 @@ void PasswordFunctions::setFirstPassword(string password){ // Ako je prvi put da
             else backupPass[i] = backupPass[i] - 2;
         }
         tempFile << backupPass;
-        //replace tempPassword.txt with password.txt
         outFile.close();
         tempFile.close();
         remove("header/password.txt");
@@ -85,7 +302,6 @@ void PasswordFunctions::setForgottenPassword(string password){ // Ako se zaborav
     fstream outFile;                                           // postavlja nova sifra, tako sto se brise stara
     setPassword(password);
     string backupPass = password;
-    // delete the old password
     outFile.open("header/password.txt", ios::out | ios::trunc);
     cout << "Old password deleted!" << endl;
     if(!outFile){
@@ -93,7 +309,6 @@ void PasswordFunctions::setForgottenPassword(string password){ // Ako se zaborav
         exit(1);
     }
     outFile.close();
-    // write the new password
     outFile.open("header/password.txt", ios::out);
     if(!outFile){
         cout << "Error opening file";
@@ -199,7 +414,6 @@ void CoffeeFunctions::AddCoffeeName(string name){ // Ova funkcija dodaje ime kaf
         exit(1);
     }
     cin.ignore(100, '\n'); // da bi se izbjeglo da se ime kafe ucita u isti red kao i prethodno ime kafe
-    // check if type of coffee already exists
     if(CheckIfCoffeeNameExists(name)){
         cout << "This coffee name already exists!" << endl;
         cout << "Please enter a different name!" << endl;
@@ -228,8 +442,18 @@ void CoffeeFunctions::AddCoffeeQuantity(int quantity){
     outFile << quantity << endl;
     outFile.close();
 }
+void CoffeeFunctions::AddBoughtCoffee(){
+    fstream outFile;
+    outFile.open("header/boughtCoffee.txt", ios::out | ios::app);
+    if(!outFile){
+        cout << "Error opening file" << endl;
+        system("PAUSE");
+        exit(1);
+    }
+    outFile << "0" << endl;
+    outFile.close();
+}
 void CoffeeFunctions::UserCoffeeUI(){
-    // coffee names from file and in an ordered list
     fstream infile, price, quantity;
     string name;
     double priceOfCoffee;
@@ -247,22 +471,16 @@ void CoffeeFunctions::UserCoffeeUI(){
         exit(1);
     }
     int i = 1;
+    cout << "---------------------------------------" << endl;
     cout << "Type of coffee - Price " << endl;
     
     cout << "---------------------------------------" << endl;
     string temp;
-   // int w = 5;
     while(infile >> name){
         price >> priceOfCoffee;
         quantity >> quantityOfCoffee;
-        // infile << name << endl;
-      //  if(i!=1){    
-       // if (temp.length() > name.length()) w = 5 - (temp.length() - name.length());
-       // else if(temp.length() < name.length()) w = 5 - (name.length() - temp.length());
-       // else w = 5;
-        //}
-       if(quantityOfCoffee > 0) cout << i << ". " << name <<": " << priceOfCoffee <<" KM"<<quantityOfCoffee<< endl;
-       else cout << i << ". "<<"**"<< name <<"*"<<"*:*" <<"*"<< priceOfCoffee <<"*"<<"*KM**" << " (Out of stock)" << endl;
+        if(quantityOfCoffee > 0) cout << i << ". " << name <<": " << priceOfCoffee <<" KM"<< endl;
+        else cout << i << ". "<<"**"<< name <<"*"<<"*:*" <<"*"<< priceOfCoffee <<"*"<<"*KM**" << " (Out of stock)" << endl;
         i++;
         temp = name;
     }
@@ -272,7 +490,6 @@ void CoffeeFunctions::UserCoffeeUI(){
     quantity.close();
 }
 void CoffeeFunctions::CoffeeUI(){
-    // coffee names from file and in an ordered list
     fstream infile, price, quantity;
     string name;
     double priceOfCoffee;
@@ -298,16 +515,9 @@ void CoffeeFunctions::CoffeeUI(){
     
     cout << " -------------------------------" << endl;
     string temp;
-   // int w = 5;
     while(infile >> name){
         price >> priceOfCoffee;
         quantity >> quantityOfCoffee;
-        // infile << name << endl;
-      //  if(i!=1){    
-       // if (temp.length() > name.length()) w = 5 - (temp.length() - name.length());
-       // else if(temp.length() < name.length()) w = 5 - (name.length() - temp.length());
-       // else w = 5;
-        //}
         cout << i << ". " << name <<" - " << priceOfCoffee << " - "<< quantityOfCoffee << endl;
         i++;
         temp = name;
@@ -337,9 +547,9 @@ void CoffeeFunctions::SetTypesOfCoffee(TypesOfCoffee coffee[]){
     string name;
     double price;
     int cups;
-    int i = 0;
-    char ans;
-    
+    int i = 0, j = 0,k = 0;
+    int a = CheckHowManyCoffeeTypes();
+    char ans; 
     do{
         CoffeeUI();
         cout << "Enter the name of the coffee: ";
@@ -352,9 +562,10 @@ void CoffeeFunctions::SetTypesOfCoffee(TypesOfCoffee coffee[]){
         AddCoffeeName(name);
         AddCoffeePrice(price);
         AddCoffeeQuantity(cups);
+        AddBoughtCoffee();
         system("CLS");
 
-        coffee[i].name = name; // napravi neku mandzu da se napravi niz od elemenata koliko ima kafa i da se moze vremenom povecavati
+        coffee[i].name = name;
         CoffeeUI();
         cout << "Do you want to add another coffee? (y/n): ";
         cin >> ans;
@@ -363,9 +574,6 @@ void CoffeeFunctions::SetTypesOfCoffee(TypesOfCoffee coffee[]){
             i++;
         }
     }while(ans == 'y');
-
-    
-
 
 }
 int CoffeeFunctions::SizeOfTypesOfCoffee(){
@@ -470,9 +678,8 @@ void CoffeeFunctions::ChangeCoffeeQuantity(){
         rename("header/tempQuantity.txt", "header/coffeeQuantities.txt");
         system("CLS");
         CoffeeUI();
-        cout << "Do you want to change another coffee name? (y/n): ";
+        cout << "Do you want to change another coffee quantity? (y/n): ";
         cin >> ans;
-        system("CLS");
     }while(ans == 'y');
 }
 void CoffeeFunctions::ChangeCoffeePrice(){
@@ -522,86 +729,6 @@ void CoffeeFunctions::ChangeCoffeePrice(){
         cin >> ans;
     }while(ans == 'y');
 }
-/*void CoffeeFunctions::RemoveCoffeeName(string choice){
-    fstream file, temp_file;
-    string name;
-    int g = 0;
-    file.open("header/coffeeNames.txt", ios::in);
-    temp_file.open("header/temp.txt", ios::out);
-    if(!file){
-        cout << "Error opening file where coffee names are stored";
-        exit(1);
-    }
-    if(!temp_file){
-        cout << "Error opening temp files are stored";
-        exit(1);
-    }
-    while(file >> name){
-        if(name == choice) g++;
-        if(name != choice) temp_file << name << endl;
-    }
-    if (g == 0) cout << "This coffee name doesn't exist!" << endl;
-    file.close();
-    temp_file.close();
-    file.open("header/coffeeNames.txt", ios::out);
-    temp_file.open("header/temp.txt", ios::in);
-    if(!file){
-        cout << "Error opening file where coffee names are stored";
-        exit(1);
-    }
-    if(!temp_file){
-        cout << "Error opening file where temp coffee names are stored";
-        exit(1);
-    }
-    while(temp_file >> name){
-        file << name << endl;
-    }
-    file.close();
-    temp_file.close();
-    temp_file.open("header/temp.txt", ios::out);
-    temp_file.close();
-}
-
-void CoffeeFunctions::RemoveCoffeePrice(string choice){
-    fstream file, temp_file;
-    string name;
-    int g = 0;
-    file.open("header/coffeePrices.txt", ios::in);
-    temp_file.open("header/temp.txt", ios::out);
-    if(!file){
-        cout << "Error opening file where coffee names are stored";
-        exit(1);
-    }
-    if(!temp_file){
-        cout << "Error opening temp files are stored";
-        exit(1);
-    }
-    while(file >> name){
-        if(name == choice) g++;
-        if(name != choice) temp_file << name << endl;
-    }
-    if (g == 0) cout << "This coffee name doesn't exist!" << endl;
-    file.close();
-    temp_file.close();
-    file.open("header/coffeeNames.txt", ios::out);
-    temp_file.open("header/temp.txt", ios::in);
-    if(!file){
-        cout << "Error opening file where coffee names are stored";
-        exit(1);
-    }
-    if(!temp_file){
-        cout << "Error opening file where temp coffee names are stored";
-        exit(1);
-    }
-    while(temp_file >> name){
-        file << name << endl;
-    }
-    file.close();
-    temp_file.close();
-    temp_file.open("header/temp.txt", ios::out);
-    temp_file.close();
-
-}*/
 void CoffeeFunctions::RemoveTypesOfCoffee(TypesOfCoffee coffee[]){
     fstream file, file_price, file_quantity;
     fstream temp_file, temp_fileprice, temp_filequantity;
@@ -617,8 +744,6 @@ void CoffeeFunctions::RemoveTypesOfCoffee(TypesOfCoffee coffee[]){
         cin >> choice;
         if(choice == "exit") return;
         system("CLS");
-    // copy the file to another file without copying number
-
         file.open("header/coffeeNames.txt", ios::in);
         file_price.open("header/coffeePrices.txt", ios::in);
         file_quantity.open("header/coffeeQuantities.txt", ios::in);
@@ -650,7 +775,6 @@ void CoffeeFunctions::RemoveTypesOfCoffee(TypesOfCoffee coffee[]){
             cout << "Error opening temp file";
             exit(1);
         }
-
         string name;
         while(file >> name){
             file_price >> price;
@@ -662,13 +786,10 @@ void CoffeeFunctions::RemoveTypesOfCoffee(TypesOfCoffee coffee[]){
                 temp_fileprice << price << endl;
                 temp_filequantity << quantity << endl;
             }
-
         }
         if(g == 0){
             cout << "There is no coffee with that name!" << endl;
         }
-        
-        //clear coffeeNames.txt
         file.close();
         file_price.close();
         file_quantity.close();
@@ -715,7 +836,6 @@ void CoffeeFunctions::RemoveTypesOfCoffee(TypesOfCoffee coffee[]){
         file.close();
         file_price.close();
         file_quantity.close();
-    // clear temp.txt
         temp_file.close();
         temp_file.open("header/temp.txt", ios::out);
         temp_file.close();
@@ -733,78 +853,7 @@ void CoffeeFunctions::RemoveTypesOfCoffee(TypesOfCoffee coffee[]){
     }while(ans == 'y');
 
 }
-void ProgramFuncs::AdminMode(){
-    PasswordFunctions pass;
-    CoffeeFunctions coffee;
-    TypesOfCoffee coffeeTypes[100];
-    string password, coffeName;
-    AdminFuncs admin;
-    bool wrongPass = false;
-    system("CLS");
-    cout << "---------------------------------------" << endl;
-    if(pass.CheckIfFirstPassword()){ cout << "First time running program!" << endl;
-   // else cout << "Welcome back!" << endl;
-    if(pass.CheckBackupPassIsEmpty()){
-        admin.NoBackupPass();
-    }
-    admin.FirstPassword(password);
-    }
-    else{
-        cout << "Welcome back!" << endl;
-        cout << "Enter password: ";
-        cin >> password;
-        cout << "---------------------------------------" << endl;
-    }
-    bool check = pass.CheckPassword(password);
-    if(check == true){
-        system("CLS");
-        cout << "Password is correct!" << endl;
-        admin.Operations(coffeeTypes);
-    }
-    else{
-        for(int i = 0; i < 3; i++){
-            if(i==2 && check == false){
-                cout << "ERROR: You have entered wrong password 3 times! Please contact system administrator(105)" << endl;
-                cout << "Did you forget your password? (y/n): ";
-                char ans;
-                cin >> ans;
-                if(ans == 'y'){
-                    admin.ChangePass(password,pass);
-                }
-                else{
-                    wrongPass = true;
-                    cout << "Program will now be terminated!" << endl;
-                    system("PAUSE");
-                    exit(1);
-                }
-            }
-            else if (check == true){
-                system("CLS");
-                cout << "Password is correct!" << endl;
-                admin.Operations(coffeeTypes);
-                i = 4;
-                break;
-            }
-            else{ cout << "Password is incorrect!" << endl;
-            cout << "Enter password: ";
-            cin >> password;
-            cout << "---------------------------------------" << endl;
-            check = pass.CheckPassword(password);
-            }
-        }
-    }
-    if(wrongPass == true){	
-        if(!pass.CheckBackupPassIsEmpty()){
-                admin.ChangePass(password,pass);
-                }
 
-            }
-            
-        }
-    //}
-    // cin.get();
-    // cout << "Press any key to continue...";
-//}
 bool UserFuncs::CheckCoins(){
     fstream file;
     int coins[4];
@@ -825,6 +874,99 @@ bool UserFuncs::CheckCoins(){
     else returner = true;
     return returner;
 }
+void UserFuncs::DisplayMissingCoins(){
+    int coins[4];
+    fstream file;
+    file.open("header/coins.txt", ios::in);
+    if(!file){
+        cout << "Error opening file where coins are stored!";
+        system("PAUSE");
+        exit(1);
+    }
+    for(int i = 0; i < 4; i++){
+        file >> coins[i];
+    }
+    file.close();
+    if(coins[0] <= 3 && coins[0] != 0){
+        cout << "---------------------------------------" << endl;
+        cout << coins[0] << "* 0.5 KM coins left!" << endl;
+        cout << "Please refill!" << endl;
+        }
+    else if (coins[1] <= 3 && coins[1] != 0){
+        cout << "---------------------------------------" << endl;
+        cout << coins[1] << "* 1 KM coins left!" << endl;
+        cout << "Please refill!" << endl;
+    }
+    else if (coins[2] <= 3 && coins[2] != 0){
+        cout << "---------------------------------------" << endl;
+        cout << coins[2] << "* 2 KM coins left!" << endl;
+        cout << "Please refill!" << endl;
+    }
+    else if (coins[3] <= 3 && coins[3] != 0){
+        cout << "---------------------------------------" << endl;
+        cout << coins[3] << "* 5 KM coins left!" << endl;
+        cout << "Please refill!" << endl;
+    } 
+    if(coins[0] == 0 ){
+        cout << "---------------------------------------" << endl;
+        cout << "There are no 0.5 KM coins left!" << endl;
+        cout << "Please refill!" << endl;
+    }
+    else if (coins[1] == 0){
+        cout << "---------------------------------------" << endl;
+        cout << "There are no 1 KM coins left!" << endl;
+        cout << "Please refill!" << endl;
+    }
+    else if (coins[2] == 0){
+        cout << "---------------------------------------" << endl;
+        cout << "There are no 2 KM coins left!" << endl;
+        cout << "Please refill!" << endl;
+    }
+    else if (coins[3] == 0){
+        cout << "---------------------------------------" << endl;
+        cout << "There are no 5 KM coins left!" << endl;
+        cout << "Please refill!" << endl;
+    }
+}
+void UserFuncs::DisplayMissingCoffee(){
+    fstream file, file_quantity, file_coins;
+    string names;
+    int quantity, coins[4],g = 0;
+    file.open("header/coffeeNames.txt",ios::in);
+    file_quantity.open("header/coffeeQuantities.txt",ios::in);
+    file_coins.open("header/coins.txt",ios::in);
+    if(!file){
+        cout << "Error opening file where coffee names are stored!";
+        system("PAUSE");
+        exit(1);
+    }
+    if(!file_quantity){
+        cout << "Error opening file where coffee quantities are stored!";
+        system("PAUSE");
+        exit(1);
+    }
+    if(!file_coins){
+        cout << "Error opening file where coins are stored!";
+        system("PAUSE");
+        exit(1);
+    }
+    for(int i = 0; i < 4; i++){
+        file_coins >> coins[i];
+    }
+    file_coins.close();
+    while(file >> names){
+        file_quantity >> quantity;
+        if(quantity  <= 3){
+            cout << "There is only " << quantity << " cups of " << names << " left!" << endl;
+            cout << "Please refill!" << endl;
+            cout << "---------------------------------------" << endl;
+            g++;
+        }
+    }
+    file.close();
+    file_quantity.close();
+    
+}
 void UserFuncs::UserUI(){
     CoffeeFunctions coffee;
     bool coin = CheckCoins();
@@ -843,6 +985,8 @@ void UserFuncs::UserUI(){
     cout << "0. Weekly report " << endl;
     cout << "404. Exit" << endl;
     cout << "---------------------------------------" << endl;
+    DisplayMissingCoffee();
+    DisplayMissingCoins();
     coffee.UserCoffeeUI();
 }
 void UserFuncs::PayingUI(double money, double price2){
@@ -1059,6 +1203,7 @@ void UserFuncs::MakingCoffeeUI(double price, string name){
     cout << "Adding milk..." << endl;
     cout << "Adding love..." << endl;
     cout << "---------------------------------------" << endl;
+    system("PAUSE");
     cout << "Your coffee is ready!" << endl;
     cout << "---------------------------------------" << endl;
     cout << "You have bought " << name << " for " << price << " KM" << endl;
@@ -1071,7 +1216,6 @@ void UserFuncs::MakingCoffeeUI(double price, string name){
     cout << "---------------------------------------" << endl;
 }
 void UserFuncs::BuyCoffee(int userChoice){
-   // cout << "Coming soon..." << endl;
     CoffeeFunctions coffee;
     fstream file, file_price, file_quantity;
     fstream temp_file, temp_fileprice, temp_filequantity;
@@ -1125,6 +1269,7 @@ void UserFuncs::BuyCoffee(int userChoice){
                         }*/
                     
                   //  else{
+                        RegisterBoughtCoffee(userChoice);
                         system("CLS");
                         MakingCoffeeUI(price, name);
                         quantity--;
@@ -1150,6 +1295,30 @@ void UserFuncs::BuyCoffee(int userChoice){
         }
        
     }
+void UserFuncs::RegisterBoughtCoffee(int userChoice){
+    fstream file;
+    CoffeeFunctions coffee;
+    int num = coffee.CheckHowManyCoffeeTypes();
+    int state[num];
+    file.open("header/boughtCoffee.txt", ios::in);
+    if(!file){
+        cout << "Error opening file where bought coffee is stored!" << endl;
+        system("PAUSE");
+        exit(1);
+    }
+    for(int i = 0; i < num; i++){
+        file >> state[i];
+    }
+    file.close();
+    for(int i = 0; i < num; i++){
+        if(i == userChoice-1) state[i]++;
+    }
+    file.open("header/boughtCoffee.txt", ios::out);
+    for(int i = 0; i < num; i++){
+        file << state[i] << endl;
+    }
+    file.close();
+}
 void UserFuncs::BeginBuying(int userChoice){
     CoffeeFunctions coffee;
     int coffeeTypes = coffee.CheckHowManyCoffeeTypes();
@@ -1161,95 +1330,135 @@ void UserFuncs::BeginBuying(int userChoice){
         system("CLS");
     }
 }
+
 void ProgramFuncs::WeeklyReport(){
     system("CLS");
-    cout << "Coming soon..." << endl;
-    system("PAUSE");
-    system("CLS");
-}
-void ProgramFuncs::UserMode(){
-    UserFuncs user;
     CoffeeFunctions coffee;
-    int userChoice;
+    fstream file,file_price, file_quantity,file_bought, file_coin,file_count, weeklyReport;
+    string name,countr;
+    string wr = "weeklyReport";
+    string txt = ".txt";
+    double price,profit,totalprofit;
+    int quantity,bought;
     int coffeeTypes = coffee.CheckHowManyCoffeeTypes();
-    do{
-        system("CLS");
-        user.UserUI();
-        cout << "Select coffee: ";
-        cin >> userChoice;
-        switch(userChoice){
-            case 0:
-                WeeklyReport();
-                //user.WeeklyReport();
-                break;
-            case 404:
-                system("CLS");
-                cout << "You will be redirected to the main menu!" << endl;
-                system("PAUSE");
-                break;
-            default:
-                system("CLS");
-                user.BeginBuying(userChoice);
-                break;
-        }
-    }while(userChoice != 404);
-}
-void ProgramFuncs::MainMenUI(){
-    system("CLS");
-    cout << "----------------------------------------" << endl;
-    cout << "Welcome to the coffee machine!" << endl;
-    cout << "Choose between the following options: " << endl;
-    cout << "1. User mode " << endl;
-    cout << "2. Admin mode " << endl;
-    cout << "3. Exit program " << endl;
-    cout << "----------------------------------------" << endl;
-    cout << "Select option: ";
-}
-void ProgramFuncs::ExitProgram(){
-    system("CLS");
-    cout << "Thank you for using our program!" << endl;
-    cout << "Program will now be terminated!" << endl;
-    system("PAUSE");
-}
-void ProgramFuncs::WrongInput(){
-    system("CLS");
-    cout << "----------------------------------------" << endl;	
-    cout << "Invalid choice!" << endl;
-    cout << "You will be redirected to the main menu!" << endl;
-    cout << "----------------------------------------" << endl;
-    system("PAUSE");
-}
-void ProgramFuncs::StartProgram(){
-    system("CLS");
-    cout << "----------------------------------------" << endl;
-    cout << "Welcome to the coffee machine!" << endl;
-    cout << "Program will now start!" << endl;
-    cout << "----------------------------------------" << endl;
-    system("PAUSE");
-}
-void ProgramFuncs::BeginProgram(){
-    int choice;
-    StartProgram();
-    do{
-        MainMenUI();
-        
-        cin >> choice;
-        switch(choice){
-            case 1:
-                UserMode();
-                break;
-            case 2:
-                AdminMode();
-                break;
-            case 3:
-                ExitProgram();
-                exit(1);
-                break;
-            default:
-                WrongInput();
-                break;
+    int g = 1;
+    count++;
+    file.open("header/coffeeNames.txt", ios::in);
+    file_price.open("header/coffeePrices.txt", ios::in);
+    file_quantity.open("header/coffeeQuantities.txt", ios::in);
+    file_bought.open("header/boughtCoffee.txt", ios::in);
+    file_count.open("header/reportCount.txt", ios::out);
+    if(!file_count){
+        cout << "Error opening file where report count is stored!" << endl;
+        system("PAUSE");
+        exit(1);
     }
-    }while(choice != 3);
+    file_count << count;
+    file_count.close();
+    file_count.open("header/reportCount.txt", ios::in);
+    file_count >> countr;
+    file_count.close();
+    string filename = wr + countr + txt;
+    if(!file){
+        cout << "Error opening file where coffee names are stored" << endl;
+        system("PAUSE");
+        exit(1);
+    }
+    if(!file_price){
+        cout << "Error opening file where coffee prices are stored" << endl;
+        system("PAUSE");
+        exit(1);
+    }
+    if(!file_quantity){
+        cout << "Error opening file where coffee quantities are stored" << endl;
+        system("PAUSE");
+        exit(1);
+    }
+    if(!file_bought){
+        cout << "Error opening file where bought coffee is stored" << endl;
+        system("PAUSE");
+        exit(1);
+    }
+    weeklyReport.open(filename.c_str(), ios::out);
+    if(!weeklyReport){
+        cout << "Error opening file where weekly report is stored" << endl;
+        system("PAUSE");
+        exit(1);
+    }
+    weeklyReport << "***************************************" << endl;
+    weeklyReport << "Weekly report " <<count << ":" << endl;
+    weeklyReport << "***************************************" << endl;
+    weeklyReport << "Coffee name - Price - Quantity" << endl;
+    while(file >> name){
+        file_price >> price;
+        file_quantity >> quantity;
+        file_bought >> bought;
+        profit = price * bought;
+        weeklyReport <<g<<". "<< name << " - " << price << " - " << quantity << endl;
+        g++;
+    }
+    weeklyReport << "***************************************" << endl;
+    weeklyReport << "Profit per coffee type:" << endl;
+    weeklyReport << "***************************************" << endl;
+    weeklyReport << "Coffee - Number of coffee sold - Profit" << endl;
+    file.close();
+    file_price.close();
+    file_quantity.close();
+    file_bought.close();
+    file.open("header/coffeeNames.txt", ios::in);
+    file_price.open("header/coffeePrices.txt", ios::in);
+    file_quantity.open("header/coffeeQuantities.txt", ios::in);
+    file_bought.open("header/boughtCoffee.txt", ios::in);
+    g = 1;
+    while(file >> name){
+        file_price >> price;
+        file_quantity >> quantity;
+        file_bought >> bought;
+        profit = price * bought;
+        totalprofit += profit;
+        weeklyReport <<g<<". "<< name <<" - "<< bought<< " - " << profit << endl;
+        g++;
+    }
+    file.close();
+    file_price.close();
+    file_quantity.close();
+    file_bought.close();
+    
+    weeklyReport << "***************************************" << endl;
+    weeklyReport << "Total profit: " << totalprofit << endl;
+    weeklyReport << "***************************************" << endl;
+    weeklyReport << "State of coins: " << endl;
+    weeklyReport << "***************************************" << endl;
+    file_coin.open("header/coins.txt", ios::in);
+    if(!file_coin){
+        cout << "Error opening file where coins are stored!" << endl;
+        system("PAUSE");
+        exit(1);
+    }
+    int coin[4];
+    for(int i = 0; i < 4; i++){
+        file_coin >> coin[i];
+    }
+    weeklyReport << "0.5 KM: " << coin[0] << endl;
+    weeklyReport << "1 KM: " << coin[1] << endl;
+    weeklyReport << "2 KM: " << coin[2] << endl;
+    weeklyReport << "5 KM: " << coin[3] << endl;
+    weeklyReport << "***************************************" << endl;
+    file_coin.close();
+    weeklyReport.close();
+    file_bought.open("header/boughtCoffee.txt", ios::out);
+    for(int i = 0; i < coffeeTypes; i++){
+        file_bought << 0 << endl;
+    }
+    file_bought.close();
+    cout << "---------------------------------------" << endl;
+    cout << "Weekly report is generated!" << endl;
+    cout << "Filename: " << filename << endl;
+    cout << "Profit and count of sold coffee is reseted!" << endl;
+    cout << "You will be redirected to the main menu!" << endl;
+    cout << "---------------------------------------" << endl;
+    system("PAUSE");
+    system("CLS");
 }
 void AdminFuncs::ChangePass(string password, PasswordFunctions pass){
     string answer;
@@ -1280,7 +1489,6 @@ void AdminFuncs::ChangePass(string password, PasswordFunctions pass){
                     prog.BeginProgram();
                 }
                 else{
-                    //enter password until they match
                     while(answer != password){
                         cout << "Passwords do not match. Enter new password: ";
                         cin >> answer;
@@ -1343,76 +1551,7 @@ void AdminFuncs::AdminUI(){
             cout << "Choose option: ";
             
 }
-void AdminFuncs::Operations(TypesOfCoffee coffeeTypes[]){
-        CoffeeFunctions coffee;
-        ProgramFuncs prog;
-        int choice;
-        system("PAUSE");
-        system("CLS");
-        do{
-           AdminUI();
-           cin >> choice;
-           system("CLS");
-           switch(choice){
-            case 1:
-                cout << "Type exit to go back to main menu" << endl;
-                coffee.SetTypesOfCoffee(coffeeTypes);
-                break;
-            case 2:
-                cout << "Type exit to go back to main menu" << endl;
-                coffee.RemoveTypesOfCoffee(coffeeTypes);
-                break;
-            case 3:
-                cout << "Type exit to go back to main menu" << endl;
-                coffee.ChangeCoffeePrice();
-                break;
-            case 4:
-                //cout << "Coming soon!" << endl;
-                cout << "Type exit to go back to main menu" << endl;
-                coffee.ChangeCoffeeQuantity();
-                break;
-            case 5:
-                cout << "Type exit to go back to main menu" << endl;
-                coffee.ChangeCoffeeName();
-                break;
-            case 6:
-                coffee.CoffeeUI();
-               // system("PAUSE");
-               // system("CLS");
-                break;
-            case 7:
-               // cout << "Coming soon!" << endl;
-               ManipulateCoinState();
-                break;
-            case 8:
-                cout << "Coming soon!" << endl;
-                break;
-            case 9:
-                system("CLS");
-                cout << "Exiting admin menu..." << endl;
-                system("PAUSE");
-                break;
-            default:
-                int choi;
-               // while(choi > 7 || choi < 1){
-                    cout << "Invalid choice!" << endl;
-                    cout << "You will be redirected to the admin menu!" << endl;
-                  //  system("PAUSE");
-                   // system("CLS");
-                 //   AdminUI();
-                  //  cin >> choi;
-               // }
-                break;
-           }
-        if(choice != 9){
-            system("PAUSE");
-            system("CLS");
-        }
-        }while(choice != 9);
 
-        //coffee.SetTypesOfCoffee(coffeeTypes);
-        //coffee.RemoveTypesOfCoffee(coffeeTypes); 
-}
 void AdminFuncs::CoinUI(int coins[]){
     system("CLS");
     cout << "----------------------------------------" << endl;
@@ -1423,7 +1562,7 @@ void AdminFuncs::CoinUI(int coins[]){
     cout << "4. 5 KM: " << coins[3] << endl;
     cout << "----------------------------------------" << endl;
 }
-void AdminFuncs::AddCoins(int coins[]){ // uradi UI
+void AdminFuncs::AddCoins(int coins[]){
     int choice;
     int amount;
     char answy;
@@ -1467,8 +1606,7 @@ void AdminFuncs::AddCoins(int coins[]){ // uradi UI
         cin >> answy;
     }while(answy == 'y' || answy == 'Y');
 }
-void AdminFuncs::RemoveCoins(int coins[]){ // uradi UI
-    // cout << "Coming soon! " << endl;
+void AdminFuncs::RemoveCoins(int coins[]){
     int choice, amount;
     char answer;
     do{
@@ -1537,7 +1675,7 @@ void AdminFuncs::RemoveCoins(int coins[]){ // uradi UI
         cin >> answer;
     }while(answer == 'y' || answer == 'Y');
 }
-void AdminFuncs::ManipulateCoinState(){ // uradi UI
+void AdminFuncs::ManipulateCoinState(){
     fstream file;
     int choice;
     do{

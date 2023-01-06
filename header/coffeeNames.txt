@@ -1,4 +1,5 @@
 Espresso
-Latte
 Macchiato
-Mocca
+Cappuchino
+Latte
+Chocolate

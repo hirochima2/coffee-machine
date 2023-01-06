@@ -30,17 +30,14 @@ class PasswordFunctions{
         void setFirstPassword(std::string); // Ako je prvi put da se ulazi u program, onda se pomocu ove funkcije postavlja prva sifra
         void setForgottenPassword(std::string); // Ako se zaboravi sifra, onda se pomocu ove funkcije postavlja nova sifra a stara se brise
         void setPassword(std::string); // ovo smo radili na faksu
-
-
 };
+
 class CoffeeFunctions{
     public:
     void AddCoffeeName(std::string); // Dodaje ime kafe u fajl
     void AddCoffeePrice(double); // Dodaje cijenu kafe u fajl
     void AddCoffeeQuantity(int); // Dodaje kolicinu kafe u fajl
-   /* void RemoveCoffeeName(std::string); // Brise ime kafe iz fajla
-    void RemoveCoffeePrice(std::string); // Brise cijenu kafe iz fajla
-    void RemoveCoffeeQuantity(std::string); // Brise kolicinu kafe iz fajla */
+    void AddBoughtCoffee();
     void ChangeCoffeeName(); // Mijenja ime kafe
     void ChangeCoffeePrice(); // Mijenja cijenu kafe
     void ChangeCoffeeQuantity(); // Mijenja kolicinu kafe
@@ -55,7 +52,7 @@ class CoffeeFunctions{
 };
 class ProgramFuncs{
     public:
-    void BeginProgram(); // Ova funkcija se poziva na pocetku programa i ona provjerava da li je prvi put da se ulazi u program
+    void BeginProgram();
     void AdminMode();
     void UserMode();
     void MainMenUI();
@@ -63,6 +60,7 @@ class ProgramFuncs{
     void WrongInput();
     void StartProgram();
     void WeeklyReport();
+    void WeeklyReportCount();
 };
 class AdminFuncs{
     public: 
@@ -70,14 +68,11 @@ class AdminFuncs{
     void NoBackupPass();
     void FirstPassword(std::string);
     void Operations(TypesOfCoffee[]);
-    // create a function that uses int as parameter and returns int
     void AdminUI();
     void ManipulateCoinState();
     void AddCoins(int[]);
     void RemoveCoins(int[]);
     void CoinUI(int[]);
-
-    
 };
 class UserFuncs{
     public:
@@ -90,5 +85,7 @@ class UserFuncs{
     void ReturnChange(double);
     bool CheckCoins();
     void MakingCoffeeUI(double, std::string);
-
+    void DisplayMissingCoffee();
+    void DisplayMissingCoins();
+    void RegisterBoughtCoffee(int);
 };
