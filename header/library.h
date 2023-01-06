@@ -10,12 +10,6 @@
 // Path: header\library.h
 // Compare this snippet from main.cpp:
 // #include "header/library.h"
-struct TypesOfCoffee{
-    std::string name;
-    double price;
-    int quantity;
-    int id;
-};
 
 class PasswordFunctions{
     private:
@@ -43,8 +37,8 @@ class CoffeeFunctions{
     void ChangeCoffeeQuantity(); // Mijenja kolicinu kafe
     void CoffeeUI();
     void UserCoffeeUI();
-    void SetTypesOfCoffee(TypesOfCoffee[]); // Postavlja podatke o kafama
-    void RemoveTypesOfCoffee(TypesOfCoffee[]); // Brise podatke o kafama
+    void SetTypesOfCoffee(); // Postavlja podatke o kafama
+    void RemoveTypesOfCoffee(); // Brise podatke o kafama
     int SizeOfTypesOfCoffee(); // Vraca broj vrsta kafe
     bool CheckIfCoffeeNameExists(std::string); // Provjerava da li kafa postoji
     int CheckHowManyCoffeeTypes(); // Provjerava koliko vrsta kafe ima
@@ -67,7 +61,7 @@ class AdminFuncs{
     void ChangePass(std::string, PasswordFunctions);
     void NoBackupPass();
     void FirstPassword(std::string);
-    void Operations(TypesOfCoffee[]);
+    void Operations();
     void AdminUI();
     void ManipulateCoinState();
     void AddCoins(int[]);

@@ -56,7 +56,6 @@ void ProgramFuncs::UserMode(){
 void ProgramFuncs::AdminMode(){
     PasswordFunctions pass;
     CoffeeFunctions coffee;
-    TypesOfCoffee coffeeTypes[100];
     string password, coffeName;
     AdminFuncs admin;
     bool wrongPass = false;
@@ -79,7 +78,7 @@ void ProgramFuncs::AdminMode(){
     if(check == true){
         system("CLS");
         cout << "Password is correct!" << endl;
-        admin.Operations(coffeeTypes);
+        admin.Operations();
     }
     else{
         for(int i = 0; i < 3; i++){
@@ -101,7 +100,7 @@ void ProgramFuncs::AdminMode(){
             else if (check == true){
                 system("CLS");
                 cout << "Password is correct!" << endl;
-                admin.Operations(coffeeTypes);
+                admin.Operations();
                 i = 4;
                 break;
             }
@@ -121,7 +120,7 @@ void ProgramFuncs::AdminMode(){
             }
             
         }
-void AdminFuncs::Operations(TypesOfCoffee coffeeTypes[]){
+void AdminFuncs::Operations(){
         CoffeeFunctions coffee;
         ProgramFuncs prog;
         int choice;
@@ -134,11 +133,11 @@ void AdminFuncs::Operations(TypesOfCoffee coffeeTypes[]){
            switch(choice){
             case 1:
                 cout << "Type exit to go back to main menu" << endl;
-                coffee.SetTypesOfCoffee(coffeeTypes);
+                coffee.SetTypesOfCoffee();
                 break;
             case 2:
                 cout << "Type exit to go back to main menu" << endl;
-                coffee.RemoveTypesOfCoffee(coffeeTypes);
+                coffee.RemoveTypesOfCoffee();
                 break;
             case 3:
                 cout << "Type exit to go back to main menu" << endl;
@@ -543,7 +542,7 @@ int CoffeeFunctions::CheckHowManyCoffeeTypes(){
     infile.close();
     return counter;
 }
-void CoffeeFunctions::SetTypesOfCoffee(TypesOfCoffee coffee[]){
+void CoffeeFunctions::SetTypesOfCoffee(){
     string name;
     double price;
     int cups;
@@ -565,7 +564,6 @@ void CoffeeFunctions::SetTypesOfCoffee(TypesOfCoffee coffee[]){
         AddBoughtCoffee();
         system("CLS");
 
-        coffee[i].name = name;
         CoffeeUI();
         cout << "Do you want to add another coffee? (y/n): ";
         cin >> ans;
@@ -729,7 +727,7 @@ void CoffeeFunctions::ChangeCoffeePrice(){
         cin >> ans;
     }while(ans == 'y');
 }
-void CoffeeFunctions::RemoveTypesOfCoffee(TypesOfCoffee coffee[]){
+void CoffeeFunctions::RemoveTypesOfCoffee(){
     fstream file, file_price, file_quantity;
     fstream temp_file, temp_fileprice, temp_filequantity;
     string choice;
@@ -1341,6 +1339,7 @@ void ProgramFuncs::WeeklyReport(){
     double price,profit,totalprofit;
     int quantity,bought;
     int coffeeTypes = coffee.CheckHowManyCoffeeTypes();
+    int deleteweek;
     int g = 1;
     count++;
     file.open("header/coffeeNames.txt", ios::in);
@@ -1446,17 +1445,40 @@ void ProgramFuncs::WeeklyReport(){
     weeklyReport << "***************************************" << endl;
     file_coin.close();
     weeklyReport.close();
-    file_bought.open("header/boughtCoffee.txt", ios::out);
-    for(int i = 0; i < coffeeTypes; i++){
-        file_bought << 0 << endl;
-    }
-    file_bought.close();
+    
     cout << "---------------------------------------" << endl;
     cout << "Weekly report is generated!" << endl;
     cout << "Filename: " << filename << endl;
-    cout << "Profit and count of sold coffee is reseted!" << endl;
     cout << "You will be redirected to the main menu!" << endl;
     cout << "---------------------------------------" << endl;
+    cout << "Since this program is not functionall 24/7, you will have to manually select if it is new week or not!" << endl;
+    cout << "---------------------------------------" << endl;
+    cout << "1. New week" << endl;
+    cout << "2. Not new week" << endl;
+    cout << "---------------------------------------" << endl;
+    cout <<"Your choice: ";
+    cin >> deleteweek;
+    if(deleteweek == 1){
+        file_bought.open("header/boughtCoffee.txt", ios::out);
+        for(int i = 0; i < coffeeTypes; i++){
+        file_bought << 0 << endl;
+        }
+        file_bought.close();
+        cout << "---------------------------------------" << endl;
+        cout << "You have selected new week!" << endl;
+        cout << "Profit count restarted!" << endl;
+        cout << "---------------------------------------" << endl;
+        cout << "You will be redirected to the main menu!" << endl;
+        cout << "---------------------------------------" << endl;
+    }
+    else{
+        cout << "---------------------------------------" << endl;
+        cout << "It is the same week!" << endl;
+        cout << "Profit count is not restarted!" << endl;
+        cout << "---------------------------------------" << endl;
+        cout << "You will be redirected to the main menu!" << endl;
+        cout << "---------------------------------------" << endl;
+    }
     system("PAUSE");
     system("CLS");
 }
