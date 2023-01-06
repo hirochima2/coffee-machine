@@ -87,5 +87,8 @@ class UserFuncs{
     bool CheckIfEnoughMoney(int);
     void PayingUI(double, double);
     bool CheckIfCoffeeisAvailable(int);
+    void ReturnChange(double);
+    bool CheckCoins();
+    void MakingCoffeeUI(double, std::string);
 
 };

@@ -805,11 +805,39 @@ void ProgramFuncs::AdminMode(){
     // cin.get();
     // cout << "Press any key to continue...";
 //}
-
+bool UserFuncs::CheckCoins(){
+    fstream file;
+    int coins[4];
+    bool returner;
+    file.open("header/coins.txt", ios::in);
+    if(!file){
+        cout << "Error opening file where coins are stored!";
+        system("PAUSE");
+        exit(1);
+    }
+    for(int i = 0; i < 4; i++){
+        file >> coins[i];
+    }
+    file.close();
+    if(coins[0] == 0 && coins[1] == 0 && coins[2] == 0 && coins[3] == 0){
+        returner = false;
+    }
+    else returner = true;
+    return returner;
+}
 void UserFuncs::UserUI(){
     CoffeeFunctions coffee;
+    bool coin = CheckCoins();
     cout << "---------------------------------------" << endl;
     cout << "Welcome dear user!" << endl;
+    if(!coin){
+        cout << "There are no coins in the machine!" << endl;
+        cout << "Contact system administrator immediately!" << endl;
+        cout << "Program will be terminated!" << endl;
+        cout << "---------------------------------------" << endl;
+        system("PAUSE");
+        exit(1);
+    }
     cout << "Choose what coffee you want to buy: " << endl;
     cout << "---------------------------------------" << endl;
     cout << "0. Weekly report " << endl;
@@ -818,6 +846,7 @@ void UserFuncs::UserUI(){
     coffee.UserCoffeeUI();
 }
 void UserFuncs::PayingUI(double money, double price2){
+    double price3;
     cout << "You have entered " << money << " KM!" << endl;
     cout << "---------------------------------------" << endl;
     if(price2 > 0){
@@ -829,9 +858,7 @@ void UserFuncs::PayingUI(double money, double price2){
         cout << "---------------------------------------" << endl;
     }
     else{
-        cout << "You have entered too much money!" << endl;
-        cout << "Change coming soon..." << endl;
-        cout << "---------------------------------------" << endl;
+        ReturnChange(price2);
     }
 
 }
@@ -864,7 +891,7 @@ bool UserFuncs::CheckIfCoffeeisAvailable(int userChoice){
 }
 bool UserFuncs::CheckIfEnoughMoney(int userChoice){
     bool returner, nomoney = false;
-    int coin,g = 1;
+    int coin[4],g = 1;
     fstream prices, coins;
     double money, price, price2;
     
@@ -882,6 +909,10 @@ bool UserFuncs::CheckIfEnoughMoney(int userChoice){
         g++;
     }
     prices.close();
+    for(int i = 0; i<4; i++){
+        coins >> coin[i];
+    }
+    coins.close();
     price2 = price;
     do{
         system("CLS");
@@ -905,30 +936,139 @@ bool UserFuncs::CheckIfEnoughMoney(int userChoice){
             price2-=0.5;
             PayingUI(money,price2);
             nomoney = false;
+            coin[0]++;
             system("PAUSE");
         }
         else if(money == 1){
             price2 -= 1;
             PayingUI(money,price2);
             nomoney = false;
+            coin[1]++;
             system("PAUSE");
         }
         else if(money == 2) {
             price2 -= 2;
             PayingUI(money,price2);
             nomoney = false;
+            coin[2]++;
             system("PAUSE");
         }
         else if(money == 5) {
             price2 -= 5;
             PayingUI(money,price2);
             nomoney = false;
+            coin[3]++;
             system("PAUSE");
         }
+        else{
+            cout << "Coin not supported!" << endl;
+            cout << "Please enter 0.5, 1, 2 or 5 KM" << endl;
+            cout << "---------------------------------------" << endl;
+            system("PAUSE");
+
+        }
     }while(price2 > 0);
+    coins.open("header/coins.txt", ios::out);
+    if(!coins){
+        cout << "Error opening file where coins are stored!" << endl;
+        system("PAUSE");
+        exit(1);
+    }
+    for(int i = 0; i < 4; i++){
+        coins << coin[i] << endl;
+    }
+    coins.close();
     if(price2 <= 0 && !nomoney ) returner = true;
     else if(price2 == 0 && nomoney) returner = false;
     return returner;
+}
+void UserFuncs::ReturnChange(double price2){
+  fstream change;
+  price2 = price2 * (-1);
+  int five = 0,two = 0,one = 0 ,half = 0;
+  int coins[4];
+  change.open("header/coins.txt", ios::in);
+    if(!change){
+        cout << "Error opening file where coins are stored!" << endl;
+        system("PAUSE");
+        exit(1);
+    }
+    for(int i = 0; i < 4; i++){
+        change >> coins[i];
+    }
+    change.close();
+    do{
+        if(price2 >= 5 && coins[3] > 0){
+            price2 -= 5;
+            coins[3]--;
+            five++;
+        }
+        else if(price2 >= 2 && coins[2] > 0){
+            price2 -= 2;
+            coins[2]--;
+            two++;
+            
+        }
+        else if(price2 >= 1 && coins[1] > 0){
+            price2 -= 1;
+            coins[1]--;
+            one++;
+        }
+        else if(price2 >= 0.5 && coins[0] > 0){
+            price2 -= 0.5;
+            coins[0]--;
+            half++;
+        }
+        else{
+            cout << "Not enough change!" << endl;
+            cout << "Please contact the administrator!" << endl;
+            cout << "---------------------------------------" << endl;
+            cout << "Your money is returned!" << endl;
+            cout << "Program will be terminated now!" << endl;
+            cout << "---------------------------------------" << endl;
+            system("PAUSE");
+            exit(1);
+        }
+    }while(price2 != 0);
+    cout << "---------------------------------------" << endl;
+    cout << "Your change is: " << endl;
+    cout << "---------------------------------------" << endl;
+    if(five > 0) cout << five << " x 5 KM" << endl;
+    if(two > 0) cout << two << " x 2 KM" << endl;
+    if(one > 0) cout << one << " x 1 KM" << endl;
+    if(half > 0) cout << half << " x 0.5 KM" << endl;
+    cout << "---------------------------------------" << endl;
+    change.open("header/coins.txt", ios::out);
+    if(!change){
+        cout << "Error opening file where coins are stored!" << endl;
+        system("PAUSE");
+        exit(1);
+    }
+    for(int i = 0; i < 4; i++){
+        change << coins[i] << endl;
+    }
+    change.close();
+    
+}
+void UserFuncs::MakingCoffeeUI(double price, string name){
+    cout << "---------------------------------------" << endl;
+    cout << "Your coffee is being prepared..." << endl;
+    cout << "---------------------------------------" << endl;
+    cout << "Adding coffee..." << endl;
+    cout << "Adding sugar..." << endl;
+    cout << "Adding milk..." << endl;
+    cout << "Adding love..." << endl;
+    cout << "---------------------------------------" << endl;
+    cout << "Your coffee is ready!" << endl;
+    cout << "---------------------------------------" << endl;
+    cout << "You have bought " << name << " for " << price << " KM" << endl;
+    cout << "---------------------------------------" << endl;
+    cout << "Thank you for your purchase!" << endl;
+    cout << "---------------------------------------" << endl;
+    cout << "Thank you for using our coffee machine!" << endl;
+    cout << "---------------------------------------" << endl;
+    cout << "Have a nice day! :)" << endl;
+    cout << "---------------------------------------" << endl;
 }
 void UserFuncs::BuyCoffee(int userChoice){
    // cout << "Coming soon..." << endl;
@@ -985,7 +1125,8 @@ void UserFuncs::BuyCoffee(int userChoice){
                         }*/
                     
                   //  else{
-                        cout << "You have bought " << name << " for " << price << " KM" << endl;
+                        system("CLS");
+                        MakingCoffeeUI(price, name);
                         quantity--;
                     }
                     temp_filequantity << quantity << endl;
